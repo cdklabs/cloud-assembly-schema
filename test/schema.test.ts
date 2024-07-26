@@ -1,18 +1,18 @@
 import { generateSchema, SCHEMAS } from '../scripts/update-schema';
 
 test('if this test fails, run "yarn update-schema"', () => {
-
   // when we compare schemas we ignore changes the
   // description that is generated from the ts docstrings.
-  const docStringFields = [
-    'description',
-  ];
+  const docStringFields = ['description'];
 
   for (const schemaName of SCHEMAS) {
     const expected = removeStringKeys(generateSchema(schemaName, false), docStringFields);
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const actual = removeStringKeys(require(`../schema/${schemaName}.schema.json`), docStringFields);
+    const actual = removeStringKeys(
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require(`../schema/${schemaName}.schema.json`),
+      docStringFields
+    );
 
     try {
       expect(actual).toEqual(expected);
@@ -23,11 +23,9 @@ test('if this test fails, run "yarn update-schema"', () => {
       throw err;
     }
   }
-
 });
 
 function removeStringKeys(obj: any, keys: string[]) {
-
   function _recurse(o: any) {
     for (const prop in o) {
       if (keys.includes(prop) && typeof o[prop] === 'string') {
