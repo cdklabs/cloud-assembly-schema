@@ -79,7 +79,10 @@ export class Manifest {
    *
    * @param filePath - path to the manifest file.
    */
-  public static loadAssemblyManifest(filePath: string, options?: LoadManifestOptions): assembly.AssemblyManifest {
+  public static loadAssemblyManifest(
+    filePath: string,
+    options?: LoadManifestOptions
+  ): assembly.AssemblyManifest {
     return Manifest.loadManifest(filePath, ASSEMBLY_SCHEMA, Manifest.patchStackTagsOnRead, options);
   }
 
@@ -132,15 +135,23 @@ export class Manifest {
    * Deprecated
    * @deprecated use `saveAssemblyManifest()`
    */
-  public static save(manifest: assembly.AssemblyManifest, filePath: string) { return this.saveAssemblyManifest(manifest, filePath); }
+  public static save(manifest: assembly.AssemblyManifest, filePath: string) {
+    return this.saveAssemblyManifest(manifest, filePath);
+  }
 
   /**
    * Deprecated
    * @deprecated use `loadAssemblyManifest()`
    */
-  public static load(filePath: string): assembly.AssemblyManifest { return this.loadAssemblyManifest(filePath); }
+  public static load(filePath: string): assembly.AssemblyManifest {
+    return this.loadAssemblyManifest(filePath);
+  }
 
-  private static validate(manifest: { version: string }, schema: jsonschema.Schema, options?: LoadManifestOptions) {
+  private static validate(
+    manifest: { version: string },
+    schema: jsonschema.Schema,
+    options?: LoadManifestOptions
+  ) {
     function parseVersion(version: string) {
       const ver = semver.valid(version);
       if (!ver) {
@@ -156,18 +167,18 @@ export class Manifest {
     if (semver.gt(actual, maxSupported) && !options?.skipVersionCheck) {
       // we use a well known error prefix so that the CLI can identify this specific error
       // and print some more context to the user.
-      throw new Error(`${VERSION_MISMATCH}: Maximum schema version supported is ${maxSupported}, but found ${actual}`);
+      throw new Error(
+        `${VERSION_MISMATCH}: Maximum schema version supported is ${maxSupported}, but found ${actual}`
+      );
     }
 
     // now validate the format is good.
     const validator = new jsonschema.Validator();
     const result = validator.validate(manifest, schema, {
-
       // does exist but is not in the TypeScript definitions
       nestedErrors: true,
 
       allowUnknownAttributes: false,
-
     } as any);
 
     let errors = result.errors;
@@ -177,11 +188,16 @@ export class Manifest {
     }
 
     if (errors.length > 0) {
-      throw new Error(`Invalid assembly manifest:\n${errors.map(e => e.stack).join('\n')}`);
+      throw new Error(`Invalid assembly manifest:\n${errors.map((e) => e.stack).join('\n')}`);
     }
   }
 
-  private static saveManifest(manifest: any, filePath: string, schema: jsonschema.Schema, preprocess?: (obj: any) => any) {
+  private static saveManifest(
+    manifest: any,
+    filePath: string,
+    schema: jsonschema.Schema,
+    preprocess?: (obj: any) => any
+  ) {
     let withVersion = { ...manifest, version: Manifest.version() };
     Manifest.validate(withVersion, schema);
     if (preprocess) {
@@ -190,7 +206,12 @@ export class Manifest {
     fs.writeFileSync(filePath, JSON.stringify(withVersion, undefined, 2));
   }
 
-  private static loadManifest(filePath: string, schema: jsonschema.Schema, preprocess?: (obj: any) => any, options?: LoadManifestOptions) {
+  private static loadManifest(
+    filePath: string,
+    schema: jsonschema.Schema,
+    preprocess?: (obj: any) => any,
+    options?: LoadManifestOptions
+  ) {
     const contents = fs.readFileSync(filePath, { encoding: 'utf-8' });
     let obj;
     try {
@@ -221,10 +242,12 @@ export class Manifest {
    * backwards-compatibility code and it just doesn't seem to be worth the effort.
    */
   private static patchStackTagsOnRead(manifest: assembly.AssemblyManifest) {
-    return Manifest.replaceStackTags(manifest, tags => tags.map((diskTag: any) => ({
-      key: diskTag.Key,
-      value: diskTag.Value,
-    })));
+    return Manifest.replaceStackTags(manifest, (tags) =>
+      tags.map((diskTag: any) => ({
+        key: diskTag.Key,
+        value: diskTag.Value,
+      }))
+    );
   }
 
   /**
@@ -233,31 +256,46 @@ export class Manifest {
    * Translate stack tags metadata if it has the "right" casing.
    */
   private static patchStackTagsOnWrite(manifest: assembly.AssemblyManifest) {
-    return Manifest.replaceStackTags(manifest, tags => tags.map(memTag =>
-      // Might already be uppercased (because stack synthesis generates it in final form yet)
-      ('Key' in memTag ? memTag : { Key: memTag.key, Value: memTag.value }) as any,
-    ));
+    return Manifest.replaceStackTags(manifest, (tags) =>
+      tags.map(
+        (memTag) =>
+          // Might already be uppercased (because stack synthesis generates it in final form yet)
+          ('Key' in memTag ? memTag : { Key: memTag.key, Value: memTag.value }) as any
+      )
+    );
   }
 
   /**
    * Recursively replace stack tags in the stack metadata
    */
-  private static replaceStackTags(manifest: assembly.AssemblyManifest, fn: Endofunctor<assembly.StackTagsMetadataEntry>): assembly.AssemblyManifest {
+  private static replaceStackTags(
+    manifest: assembly.AssemblyManifest,
+    fn: Endofunctor<assembly.StackTagsMetadataEntry>
+  ): assembly.AssemblyManifest {
     // Need to add in the `noUndefined`s because otherwise jest snapshot tests are going to freak out
     // about the keys with values that are `undefined` (even though they would never be JSON.stringified)
     return noUndefined({
       ...manifest,
-      artifacts: mapValues(manifest.artifacts, artifact => {
-        if (artifact.type !== assembly.ArtifactType.AWS_CLOUDFORMATION_STACK) { return artifact; }
+      artifacts: mapValues(manifest.artifacts, (artifact) => {
+        if (artifact.type !== assembly.ArtifactType.AWS_CLOUDFORMATION_STACK) {
+          return artifact;
+        }
         return noUndefined({
           ...artifact,
-          metadata: mapValues(artifact.metadata, metadataEntries => metadataEntries.map(metadataEntry => {
-            if (metadataEntry.type !== assembly.ArtifactMetadataEntryType.STACK_TAGS || !metadataEntry.data) { return metadataEntry; }
-            return {
-              ...metadataEntry,
-              data: fn(metadataEntry.data as assembly.StackTagsMetadataEntry),
-            };
-          })),
+          metadata: mapValues(artifact.metadata, (metadataEntries) =>
+            metadataEntries.map((metadataEntry) => {
+              if (
+                metadataEntry.type !== assembly.ArtifactMetadataEntryType.STACK_TAGS ||
+                !metadataEntry.data
+              ) {
+                return metadataEntry;
+              }
+              return {
+                ...metadataEntry,
+                data: fn(metadataEntry.data as assembly.StackTagsMetadataEntry),
+              };
+            })
+          ),
         } as assembly.ArtifactManifest);
       }),
     });
@@ -268,8 +306,13 @@ export class Manifest {
 
 type Endofunctor<A> = (x: A) => A;
 
-function mapValues<A, B>(xs: Record<string, A> | undefined, fn: (x: A) => B): Record<string, B> | undefined {
-  if (!xs) { return undefined; }
+function mapValues<A, B>(
+  xs: Record<string, A> | undefined,
+  fn: (x: A) => B
+): Record<string, B> | undefined {
+  if (!xs) {
+    return undefined;
+  }
   const ret: Record<string, B> | undefined = {};
   for (const [k, v] of Object.entries(xs)) {
     ret[k] = fn(v);
@@ -288,5 +331,5 @@ function noUndefined<A extends object>(xs: A): A {
 }
 
 function stripEnumErrors(errors: jsonschema.ValidationError[]) {
-  return errors.filter(e => typeof e.schema ==='string' || !('enum' in e.schema));
+  return errors.filter((e) => typeof e.schema === 'string' || !('enum' in e.schema));
 }

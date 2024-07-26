@@ -263,7 +263,11 @@ export type StackTagsMetadataEntry = Tag[];
 /**
  * Union type for all metadata entries that might exist in the manifest.
  */
-export type MetadataEntryData = AssetMetadataEntry | LogMessageMetadataEntry | LogicalIdMetadataEntry | StackTagsMetadataEntry;
+export type MetadataEntryData =
+  | AssetMetadataEntry
+  | LogMessageMetadataEntry
+  | LogicalIdMetadataEntry
+  | StackTagsMetadataEntry;
 
 /**
  * Type of artifact metadata entry.

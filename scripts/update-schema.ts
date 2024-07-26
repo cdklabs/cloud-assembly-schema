@@ -28,7 +28,7 @@ const SCHEMA_DEFINITIONS: {
     files: string[];
   };
 } = {
-  'assets': {
+  assets: {
     rootTypeName: 'AssetManifest',
     files: [path.join('assets', 'schema.ts')],
   },
@@ -36,7 +36,7 @@ const SCHEMA_DEFINITIONS: {
     rootTypeName: 'AssemblyManifest',
     files: [path.join('cloud-assembly', 'schema.ts')],
   },
-  'integ': {
+  integ: {
     rootTypeName: 'IntegManifest',
     files: [path.join('integ-tests', 'schema.ts')],
   },
@@ -87,7 +87,10 @@ export function generateSchema(schemaName: string, saveToFile: boolean = true) {
     strictNullChecks: true,
   };
 
-  const program = tjs.getProgramFromFiles(spec.files.map(file =>path.join(__dirname, '..', 'lib', file)), compilerOptions);
+  const program = tjs.getProgramFromFiles(
+    spec.files.map((file) => path.join(__dirname, '..', 'lib', file)),
+    compilerOptions
+  );
   const schema = tjs.generateSchema(program, spec.rootTypeName, settings);
 
   augmentDescription(schema);
@@ -110,12 +113,9 @@ export function generateSchema(schemaName: string, saveToFile: boolean = true) {
  * 'description' of the property.
  */
 function augmentDescription(schema: any) {
-
   function _recurse(o: any) {
     for (const prop in o) {
-
       if (prop === 'description' && typeof o[prop] === 'string') {
-
         const description = o[prop];
         const defaultValue = o.default;
 
@@ -129,7 +129,6 @@ function augmentDescription(schema: any) {
 
         delete o.default;
         o[prop] = descriptionWithDefault;
-
       } else if (typeof o[prop] === 'object') {
         _recurse(o[prop]);
       }
@@ -137,7 +136,6 @@ function augmentDescription(schema: any) {
   }
 
   _recurse(schema);
-
 }
 
 /**
@@ -147,5 +145,7 @@ function augmentDescription(schema: any) {
  * compatibility checks.
  */
 function addAnyMetadataEntry(schema: any) {
-  schema?.definitions?.MetadataEntry?.properties.data.anyOf.push({ description: 'Free form data.' });
+  schema?.definitions?.MetadataEntry?.properties.data.anyOf.push({
+    description: 'Free form data.',
+  });
 }

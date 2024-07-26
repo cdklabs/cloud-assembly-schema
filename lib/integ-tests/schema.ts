@@ -32,4 +32,3 @@ export interface IntegManifest {
    */
   readonly testCases: { [testName: string]: TestCase };
 }
-

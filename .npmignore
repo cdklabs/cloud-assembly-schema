@@ -2,12 +2,16 @@
 /.projen/
 /test-reports/
 junit.xml
+/jest.config.json
 /coverage/
 permissions-backup.acl
+/dist/changelog.md
+/dist/version.txt
 /.mergify.yml
+/.prettierignore
+/.prettierrc.json
 /test/
 /tsconfig.dev.json
-/src/
 !/lib/
 !/lib/**/*.js
 !/lib/**/*.d.ts
@@ -20,6 +24,9 @@ dist
 tsconfig.tsbuildinfo
 /.eslintrc.json
 !.jsii
+*.ts
+!*.d.ts
+**/scripts
 /.gitattributes
 /.projenrc.ts
 /projenrc

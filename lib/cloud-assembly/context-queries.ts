@@ -91,7 +91,7 @@ export interface AmiContextQuery {
   /**
    * Filters to DescribeImages call
    */
-  readonly filters: {[key: string]: string[]};
+  readonly filters: { [key: string]: string[] };
 }
 
 /**
@@ -114,7 +114,6 @@ export interface AvailabilityZonesContextQuery {
    * @default - None
    */
   readonly lookupRoleArn?: string;
-
 }
 
 /**
@@ -216,7 +215,7 @@ export interface VpcContextQuery {
    *
    * @see https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html
    */
-  readonly filter: {[key: string]: string};
+  readonly filter: { [key: string]: string };
 
   /**
    * Whether to populate the subnetGroups field of the `VpcContextResponse`,
@@ -500,15 +499,15 @@ export interface PluginContextQuery {
   [key: string]: any;
 }
 
-export type ContextQueryProperties = AmiContextQuery
-| AvailabilityZonesContextQuery
-| HostedZoneContextQuery
-| SSMParameterContextQuery
-| VpcContextQuery
-| EndpointServiceAvailabilityZonesContextQuery
-| LoadBalancerContextQuery
-| LoadBalancerListenerContextQuery
-| SecurityGroupContextQuery
-| KeyContextQuery
-| PluginContextQuery;
-
+export type ContextQueryProperties =
+  | AmiContextQuery
+  | AvailabilityZonesContextQuery
+  | HostedZoneContextQuery
+  | SSMParameterContextQuery
+  | VpcContextQuery
+  | EndpointServiceAvailabilityZonesContextQuery
+  | LoadBalancerContextQuery
+  | LoadBalancerListenerContextQuery
+  | SecurityGroupContextQuery
+  | KeyContextQuery
+  | PluginContextQuery;

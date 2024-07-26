@@ -1,4 +1,3 @@
-
 /**
  * Information needed to access an IAM role created
  * as part of the bootstrap process
@@ -198,7 +197,8 @@ export interface NestedCloudAssemblyProperties {
 /**
  * Properties for manifest artifacts
  */
-export type ArtifactProperties = AwsCloudFormationStackProperties
-| AssetManifestProperties
-| TreeArtifactProperties
-| NestedCloudAssemblyProperties;
+export type ArtifactProperties =
+  | AwsCloudFormationStackProperties
+  | AssetManifestProperties
+  | TreeArtifactProperties
+  | NestedCloudAssemblyProperties;

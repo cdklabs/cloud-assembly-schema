@@ -14,51 +14,51 @@ export interface TestOptions {
   readonly stackUpdateWorkflow?: boolean;
 
   /**
-    * Additional options to use for each CDK command
-    *
-    * @default - runner default options
-    */
+   * Additional options to use for each CDK command
+   *
+   * @default - runner default options
+   */
   readonly cdkCommandOptions?: CdkCommands;
 
   /**
-    * Additional commands to run at predefined points in the test workflow
-    *
-    * e.g. { postDeploy: ['yarn', 'test'] }
-    *
-    * @default - no hooks
-    */
+   * Additional commands to run at predefined points in the test workflow
+   *
+   * e.g. { postDeploy: ['yarn', 'test'] }
+   *
+   * @default - no hooks
+   */
   readonly hooks?: Hooks;
 
   /**
-    * Whether or not to include asset hashes in the diff
-    * Asset hashes can introduces a lot of unneccessary noise into tests,
-    * but there are some cases where asset hashes _should_ be included. For example
-    * any tests involving custom resources or bundling
-    *
-    * @default false
-    */
+   * Whether or not to include asset hashes in the diff
+   * Asset hashes can introduces a lot of unneccessary noise into tests,
+   * but there are some cases where asset hashes _should_ be included. For example
+   * any tests involving custom resources or bundling
+   *
+   * @default false
+   */
   readonly diffAssets?: boolean;
 
   /**
-    * List of CloudFormation resource types in this stack that can
-    * be destroyed as part of an update without failing the test.
-    *
-    * This list should only include resources that for this specific
-    * integration test we are sure will not cause errors or an outage if
-    * destroyed. For example, maybe we know that a new resource will be created
-    * first before the old resource is destroyed which prevents any outage.
-    *
-    * e.g. ['AWS::IAM::Role']
-    *
-    * @default - do not allow destruction of any resources on update
-    */
+   * List of CloudFormation resource types in this stack that can
+   * be destroyed as part of an update without failing the test.
+   *
+   * This list should only include resources that for this specific
+   * integration test we are sure will not cause errors or an outage if
+   * destroyed. For example, maybe we know that a new resource will be created
+   * first before the old resource is destroyed which prevents any outage.
+   *
+   * e.g. ['AWS::IAM::Role']
+   *
+   * @default - do not allow destruction of any resources on update
+   */
   readonly allowDestroy?: string[];
 
   /**
-    * Limit deployment to these regions
-    *
-    * @default - can run in any region
-    */
+   * Limit deployment to these regions
+   *
+   * @default - can run in any region
+   */
   readonly regions?: string[];
 }
 
