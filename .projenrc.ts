@@ -7,6 +7,11 @@ const project = new cdk.JsiiProject({
   authorOrganization: true,
   authorUrl: 'https://aws.amazon.com',
   defaultReleaseBranch: 'main',
+  autoApproveUpgrades: true,
+  autoApproveOptions: {
+    allowedUsernames: ['aws-cdk-automation'],
+    secret: 'GITHUB_TOKEN',
+  },
   name: '@aws-cdk/cloud-assembly-schema',
   projenrcTs: true,
   docgen: false,
