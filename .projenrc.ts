@@ -1,7 +1,9 @@
-import { JsonPatch, cdk, release } from 'projen';
+import { JsonPatch, cdk } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
-const project = new cdk.JsiiProject({
+import { bump } from './projenrc';
+
+export const project = new cdk.JsiiProject({
   author: 'Amazon Web Services',
   authorAddress: '',
   authorOrganization: true,
@@ -17,6 +19,12 @@ const project = new cdk.JsiiProject({
   docgen: false,
   publishDryRun: true,
   stability: Stability.STABLE,
+  releaseWorkflowSetupSteps: [
+    {
+      name: 'Pre-Release Setup',
+      run: 'npx projen pre-release',
+    },
+  ],
   jsiiVersion: '*',
   keywords: ['aws', 'cdk'],
   repositoryUrl: 'https://github.com/cdklabs/cloud-assembly-schema.git',
@@ -50,7 +58,8 @@ const project = new cdk.JsiiProject({
   },
   eslintOptions: {
     prettier: true,
-    dirs: ['lib', 'test', 'scripts'],
+    dirs: ['lib'],
+    devdirs: ['test'],
   },
   jestOptions: {
     jestConfig: {
@@ -65,12 +74,32 @@ const project = new cdk.JsiiProject({
   description: 'Cloud Assembly Schema',
   devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
+  minMajorVersion: bump(),
 });
 
-release.ReleaseTrigger;
+project.addScripts({
+  'update-schema': 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"',
+});
+
+project.preCompileTask.exec('yarn update-schema');
+project.addTask('pre-release', {
+  steps: [
+    {
+      exec: 'yarn update-schema',
+    },
+    {
+      exec: 'yarn default',
+    },
+  ],
+});
+
+project.tasks
+  .tryFind('release')
+  ?.updateStep(4, { exec: "git diff --ignore-space-at-eol ':!.projen/tasks.json'" });
+
+project.tasks.tryFind('release')?.exec('git restore .projen/tasks.json');
 
 const packageJson = project.tryFindObjectFile('package.json');
-
 packageJson?.patch(
   JsonPatch.add('/jsii/targets/python/classifiers', [
     'Framework :: AWS CDK',
@@ -81,7 +110,5 @@ packageJson?.patch(
 project.addPackageIgnore('*.ts');
 project.addPackageIgnore('!*.d.ts');
 project.addPackageIgnore('**/scripts');
-
-project.addScripts({ 'update-schema': 'bash ./scripts/update-schema.sh' });
 
 project.synth();

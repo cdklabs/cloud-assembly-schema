@@ -1,68 +1,31 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as tjs from 'typescript-json-schema';
-
-function log(message: string) {
-  // eslint-disable-next-line no-console
-  console.log(message);
-}
-
-/**
- * Where schemas are committed.
- */
-const SCHEMA_DIR = path.resolve(__dirname, '../schema');
-
-const SCHEMA_DEFINITIONS: {
-  [schemaName: string]: {
-    /**
-     * The name of the root type.
-     */
-    rootTypeName: string;
-    /**
-     * Files loaded to generate the schema.
-     * Should be relative to `cloud-assembly-schema/lib`.
-     * Usually this is just the file containing the root type.
-     */
-    files: string[];
-  };
-} = {
-  assets: {
-    rootTypeName: 'AssetManifest',
-    files: [path.join('assets', 'schema.ts')],
-  },
-  'cloud-assembly': {
-    rootTypeName: 'AssemblyManifest',
-    files: [path.join('cloud-assembly', 'schema.ts')],
-  },
-  integ: {
-    rootTypeName: 'IntegManifest',
-    files: [path.join('integ-tests', 'schema.ts')],
-  },
-};
-
-export const SCHEMAS = Object.keys(SCHEMA_DEFINITIONS);
-
-export function update() {
-  for (const s of SCHEMAS) {
-    generateSchema(s);
-  }
-
-  bump();
-}
+import { SCHEMA_DIR, getGeneratedSchemaPaths, getSchemaDefinition } from './schema-definition';
+import { exec, log } from './util';
 
 export function bump() {
+  const tags = exec([
+    'git',
+    'ls-remote',
+    '--tags',
+    'git@github.com:cdklabs/cloud-assembly-schema.git',
+  ]);
+
+  const oldVersion = tags.split('/v').pop()!.slice(0, -3);
+
+  const newVersion = schemasChanged() ? semver.inc(oldVersion, 'major')! : oldVersion;
   const versionFile = path.join(SCHEMA_DIR, 'cloud-assembly.version.json');
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const metadata = require(versionFile);
-
-  const oldVersion = metadata.version;
-  const newVersion = semver.inc(oldVersion, 'major');
 
   log(`Updating schema version: ${oldVersion} -> ${newVersion}`);
   fs.writeFileSync(versionFile, JSON.stringify({ version: newVersion }));
+  return parseInt(newVersion);
+}
+
+export function schemasChanged(): boolean {
+  const changes = exec(['git', 'diff', '--name-only', 'origin/main']).split('\n');
+  return changes.filter((change) => getGeneratedSchemaPaths().includes(change)).length > 0;
 }
 
 /**
@@ -72,7 +35,7 @@ export function bump() {
  * @param shouldBump writes a new version of the schema and bumps the major version
  */
 export function generateSchema(schemaName: string, saveToFile: boolean = true) {
-  const spec = SCHEMA_DEFINITIONS[schemaName];
+  const spec = getSchemaDefinition(schemaName);
   const out = saveToFile ? path.join(SCHEMA_DIR, `${schemaName}.schema.json`) : '';
 
   const settings: Partial<tjs.Args> = {
@@ -87,10 +50,7 @@ export function generateSchema(schemaName: string, saveToFile: boolean = true) {
     strictNullChecks: true,
   };
 
-  const program = tjs.getProgramFromFiles(
-    spec.files.map((file) => path.join(__dirname, '..', 'lib', file)),
-    compilerOptions
-  );
+  const program = tjs.getProgramFromFiles([spec.sourceFile], compilerOptions);
   const schema = tjs.generateSchema(program, spec.rootTypeName, settings);
 
   augmentDescription(schema);

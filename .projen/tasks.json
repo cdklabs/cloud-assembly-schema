@@ -117,7 +117,7 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ lib test scripts build-tools projenrc .projenrc.ts",
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ lib test projenrc .projenrc.ts",
           "receiveArgs": true
         }
       ]
@@ -225,7 +225,23 @@
     },
     "pre-compile": {
       "name": "pre-compile",
-      "description": "Prepare the project for compilation"
+      "description": "Prepare the project for compilation",
+      "steps": [
+        {
+          "exec": "yarn update-schema"
+        }
+      ]
+    },
+    "pre-release": {
+      "name": "pre-release",
+      "steps": [
+        {
+          "exec": "yarn update-schema"
+        },
+        {
+          "exec": "yarn default"
+        }
+      ]
     },
     "release": {
       "name": "release",
@@ -247,7 +263,10 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git diff --ignore-space-at-eol --exit-code"
+          "exec": "git diff --ignore-space-at-eol ':!.projen/tasks.json'"
+        },
+        {
+          "exec": "git restore .projen/tasks.json"
         }
       ]
     },

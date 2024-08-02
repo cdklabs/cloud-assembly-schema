@@ -13,16 +13,16 @@ import * as integ from './integ-tests';
 // see exec.ts#createAssembly
 export const VERSION_MISMATCH: string = 'Cloud assembly schema version mismatch';
 
-const ASSETS_SCHEMA = require('../schema/assets.schema.json');
+import ASSETS_SCHEMA = require('../schema/assets.schema.json');
 
-const ASSEMBLY_SCHEMA = require('../schema/cloud-assembly.schema.json');
+import ASSEMBLY_SCHEMA = require('../schema/cloud-assembly.schema.json');
+
+import INTEG_SCHEMA = require('../schema/integ.schema.json');
 
 /**
  * Version is shared for both manifests
  */
-const SCHEMA_VERSION = require('../schema/cloud-assembly.version.json').version;
-
-const INTEG_SCHEMA = require('../schema/integ.schema.json');
+const SCHEMA_VERSION = require('../package.json').version;
 
 /**
  * Options for the loadManifest operation
