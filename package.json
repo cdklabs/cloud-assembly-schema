@@ -24,6 +24,7 @@
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
     "pre-compile": "npx projen pre-compile",
+    "pre-release": "npx projen pre-release",
     "release": "npx projen release",
     "test": "npx projen test",
     "test:watch": "npx projen test:watch",
@@ -31,7 +32,7 @@
     "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
     "projen": "npx projen",
-    "update-schema": "bash ./scripts/update-schema.sh"
+    "update-schema": "ts-node --prefer-ts-exts -e \"require('./projenrc/update.ts').update()\""
   },
   "author": {
     "name": "Amazon Web Services",

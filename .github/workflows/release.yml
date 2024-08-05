@@ -31,6 +31,8 @@ jobs:
           node-version: 18.18.0
       - name: Install dependencies
         run: yarn install --check-files --frozen-lockfile
+      - name: Pre-Release Setup
+        run: npx projen pre-release
       - name: release
         run: npx projen release
       - name: Check if version has already been tagged
