@@ -17,7 +17,6 @@ export const project = new cdk.JsiiProject({
   name: '@aws-cdk/cloud-assembly-schema',
   projenrcTs: true,
   docgen: false,
-  publishDryRun: true,
   stability: Stability.STABLE,
   releaseWorkflowSetupSteps: [
     {

@@ -16,10 +16,8 @@ export function bump() {
   const oldVersion = tags.split('/v').pop()!.slice(0, -3);
 
   const newVersion = schemasChanged() ? semver.inc(oldVersion, 'major')! : oldVersion;
-  const versionFile = path.join(SCHEMA_DIR, 'cloud-assembly.version.json');
 
   log(`Updating schema version: ${oldVersion} -> ${newVersion}`);
-  fs.writeFileSync(versionFile, JSON.stringify({ version: newVersion }));
   return parseInt(newVersion);
 }
 
