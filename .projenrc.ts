@@ -34,6 +34,7 @@ export const project = new cdk.JsiiProject({
     javaPackage: 'software.amazon.awscdk.cloudassembly.schema',
     mavenArtifactId: 'cdk-cloud-assembly-schema',
     mavenGroupId: 'software.amazon.awscdk',
+    mavenEndpoint: 'aws.oss.sonatype.org',
   },
   publishToNuget: {
     dotNetNamespace: 'Amazon.CDK.CloudAssembly.Schema',
