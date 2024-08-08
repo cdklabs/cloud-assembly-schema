@@ -46,7 +46,7 @@ export const project = new cdk.JsiiProject({
     module: 'aws_cdk.cloud_assembly_schema',
   },
   publishToGo: {
-    moduleName: 'github.com/aws/aws-cdk-go/awscdk/cloudassemblyschema',
+    moduleName: 'github.com/cdklabs/cloud-assembly-schema-go/awscdk/cloudassemblyschema',
   },
   prettier: true,
   prettierOptions: {
