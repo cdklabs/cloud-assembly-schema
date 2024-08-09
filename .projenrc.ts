@@ -1,7 +1,7 @@
 import { JsonPatch, cdk } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
-import { bump } from './projenrc';
+import { Version } from './projenrc';
 
 export const project = new cdk.JsiiProject({
   author: 'Amazon Web Services',
@@ -34,7 +34,7 @@ export const project = new cdk.JsiiProject({
     javaPackage: 'software.amazon.awscdk.cloudassembly.schema',
     mavenArtifactId: 'cdk-cloud-assembly-schema',
     mavenGroupId: 'software.amazon.awscdk',
-    mavenEndpoint: 's01.oss.sonatype.org',
+    mavenEndpoint: 'https://s01.oss.sonatype.org',
   },
   publishToNuget: {
     dotNetNamespace: 'Amazon.CDK.CloudAssembly.Schema',
@@ -46,7 +46,8 @@ export const project = new cdk.JsiiProject({
     module: 'aws_cdk.cloud_assembly_schema',
   },
   publishToGo: {
-    moduleName: 'github.com/aws/aws-cdk-go/awscdk/cloudassemblyschema',
+    // The version at the end of the module name may be a number or v_NEXT in package.json
+    moduleName: `github.com/aws/aws-cdk-go/awscdk/cloudassemblyschema/awscdkcloudassemblyschema/v${Version.goVersion()}`,
   },
   prettier: true,
   prettierOptions: {
@@ -74,7 +75,7 @@ export const project = new cdk.JsiiProject({
   description: 'Cloud Assembly Schema',
   devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
-  minMajorVersion: bump(),
+  minMajorVersion: Version.bump(),
 });
 
 project.addScripts({
