@@ -6,8 +6,7 @@ import { exec, log } from './util';
 
 export function schemasChanged(): boolean {
   const branch = exec(['git', 'rev-parse', '--abbrev-ref', 'HEAD']);
-  console.log(exec(['git', 'fetch', 'origin', '--prune']));
-  console.log(exec(['git', 'branch', '-a']));
+  exec(['git', 'fetch', 'origin', '--prune']);
   const changes = exec(['git', 'diff', '--name-only', branch, 'remotes/origin/main']).split('\n');
   return changes.filter((change) => getGeneratedSchemaPaths().includes(change)).length > 0;
 }
