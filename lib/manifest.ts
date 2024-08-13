@@ -164,7 +164,7 @@ export class Manifest {
     const actual = parseVersion(manifest.version);
 
     // first validate the version should be accepted. all versions within the same minor version are fine
-    if (maxSupported !== semver.major(actual) && !options?.skipVersionCheck) {
+    if (maxSupported < semver.major(actual) && !options?.skipVersionCheck) {
       // we use a well known error prefix so that the CLI can identify this specific error
       // and print some more context to the user.
       throw new Error(
