@@ -1,28 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as semver from 'semver';
 import * as tjs from 'typescript-json-schema';
 import { SCHEMA_DIR, getGeneratedSchemaPaths, getSchemaDefinition } from './schema-definition';
 import { exec, log } from './util';
 
-export function bump() {
-  const tags = exec([
-    'git',
-    'ls-remote',
-    '--tags',
-    'git@github.com:cdklabs/cloud-assembly-schema.git',
-  ]);
-
-  const oldVersion = tags.split('/v').pop()!.slice(0, -3);
-
-  const newVersion = schemasChanged() ? semver.inc(oldVersion, 'major')! : oldVersion;
-
-  log(`Updating schema version: ${oldVersion} -> ${newVersion}`);
-  return parseInt(newVersion);
-}
-
 export function schemasChanged(): boolean {
-  const changes = exec(['git', 'diff', '--name-only', 'origin/main']).split('\n');
+  const branch = exec(['git', 'rev-parse', '--abbrev-ref', 'HEAD']);
+  console.log(exec(['git', 'fetch', 'origin', '--prune']));
+  console.log(exec(['git', 'branch', '-a']));
+  const changes = exec(['git', 'diff', '--name-only', branch, 'remotes/origin/main']).split('\n');
   return changes.filter((change) => getGeneratedSchemaPaths().includes(change)).length > 0;
 }
 
@@ -30,11 +16,10 @@ export function schemasChanged(): boolean {
  * Generates a schema from typescript types.
  * @returns JSON schema
  * @param schemaName the schema to generate
- * @param shouldBump writes a new version of the schema and bumps the major version
  */
-export function generateSchema(schemaName: string, saveToFile: boolean = true) {
+export function generateSchema(schemaName: string) {
   const spec = getSchemaDefinition(schemaName);
-  const out = saveToFile ? path.join(SCHEMA_DIR, `${schemaName}.schema.json`) : '';
+  const out = path.join(SCHEMA_DIR, `${schemaName}.schema.json`);
 
   const settings: Partial<tjs.Args> = {
     required: true,
@@ -54,10 +39,8 @@ export function generateSchema(schemaName: string, saveToFile: boolean = true) {
   augmentDescription(schema);
   addAnyMetadataEntry(schema);
 
-  if (out) {
-    log(`Generating schema to ${out}`);
-    fs.writeFileSync(out, JSON.stringify(schema, null, 4));
-  }
+  log(`Generating schema to ${out}`);
+  fs.writeFileSync(out, JSON.stringify(schema, null, 4));
 
   return schema;
 }

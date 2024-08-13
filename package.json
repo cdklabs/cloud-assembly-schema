@@ -31,8 +31,7 @@
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
-    "projen": "npx projen",
-    "update-schema": "ts-node --prefer-ts-exts -e \"require('./projenrc/update.ts').update()\""
+    "projen": "npx projen"
   },
   "author": {
     "name": "Amazon Web Services",
@@ -111,7 +110,7 @@
         "iconUrl": "https://raw.githubusercontent.com/aws/aws-cdk/main/logo/default-256-dark.png"
       },
       "go": {
-        "moduleName": "github.com/aws/aws-cdk-go/awscdk/cloudassemblyschema/awscdkcloudassemblyschema/v_NEXT"
+        "moduleName": "github.com/cdklabs/cloud-assembly-schema-go"
       }
     },
     "tsc": {

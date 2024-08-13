@@ -1,2 +1,2 @@
 export * from './update';
-export * from './bump';
+export * from './version-bump';
