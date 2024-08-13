@@ -160,15 +160,15 @@ export class Manifest {
       return ver;
     }
 
-    const maxSupported = parseVersion(Manifest.version());
+    const maxSupported = semver.major(parseVersion(Manifest.version()));
     const actual = parseVersion(manifest.version);
 
-    // first validate the version should be accepted.
-    if (semver.gt(actual, maxSupported) && !options?.skipVersionCheck) {
+    // first validate the version should be accepted. all versions within the same minor version are fine
+    if (maxSupported < semver.major(actual) && !options?.skipVersionCheck) {
       // we use a well known error prefix so that the CLI can identify this specific error
       // and print some more context to the user.
       throw new Error(
-        `${VERSION_MISMATCH}: Maximum schema version supported is ${maxSupported}, but found ${actual}`
+        `${VERSION_MISMATCH}: Maximum schema version supported is ${maxSupported}.x.x, but found ${actual}`
       );
     }
 

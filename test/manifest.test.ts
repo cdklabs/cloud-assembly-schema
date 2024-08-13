@@ -56,7 +56,7 @@ test('manifest load fails on higher major version', () => {
 
 // once we start introducing minor version bumps that are considered
 // non breaking, this test can be removed.
-test('manifest load fails on higher minor version', () => {
+test('manifest load succeeds on higher minor version', () => {
   const outdir = fs.mkdtempSync(path.join(os.tmpdir(), 'schema-tests'));
   const manifestFile = path.join(outdir, 'manifest.json');
 
@@ -71,13 +71,34 @@ test('manifest load fails on higher minor version', () => {
     // can't use saveAssemblyManifest because it will force the correct version
     fs.writeFileSync(manifestFile, JSON.stringify(assemblyManifest));
 
-    expect(() => Manifest.loadAssemblyManifest(manifestFile)).toThrow(
+    expect(() => Manifest.loadAssemblyManifest(manifestFile)).not.toThrow(
       /Cloud assembly schema version mismatch/
     );
   }
 });
 
-test('manifest load doesnt fail if version checking is disabled, and unknown properties are added', () => {
+test('manifest load succeeds on higher patch version', () => {
+  const outdir = fs.mkdtempSync(path.join(os.tmpdir(), 'schema-tests'));
+  const manifestFile = path.join(outdir, 'manifest.json');
+
+  const newVersion = semver.inc(Manifest.version(), 'patch');
+  expect(newVersion).toBeTruthy();
+
+  if (newVersion) {
+    const assemblyManifest: AssemblyManifest = {
+      version: newVersion,
+    };
+
+    // can't use saveAssemblyManifest because it will force the correct version
+    fs.writeFileSync(manifestFile, JSON.stringify(assemblyManifest));
+
+    expect(() => Manifest.loadAssemblyManifest(manifestFile)).not.toThrow(
+      /Cloud assembly schema version mismatch/
+    );
+  }
+});
+
+test('manifest load does not fail if version checking is disabled, and unknown properties are added', () => {
   const outdir = fs.mkdtempSync(path.join(os.tmpdir(), 'schema-tests'));
   const manifestFile = path.join(outdir, 'manifest.json');
   const newVersion = semver.inc(Manifest.version(), 'major');
@@ -100,29 +121,6 @@ test('manifest load doesnt fail if version checking is disabled, and unknown pro
   fs.writeFileSync(manifestFile, JSON.stringify(assemblyManifest));
 
   Manifest.loadAssemblyManifest(manifestFile, { skipVersionCheck: true, skipEnumCheck: true });
-});
-
-// once we start introducing patch version bumps that are considered
-// non breaking, this test can be removed.
-test('manifest load fails on higher patch version', () => {
-  const outdir = fs.mkdtempSync(path.join(os.tmpdir(), 'schema-tests'));
-  const manifestFile = path.join(outdir, 'manifest.json');
-
-  const newVersion = semver.inc(Manifest.version(), 'patch');
-  expect(newVersion).toBeTruthy();
-
-  if (newVersion) {
-    const assemblyManifest: AssemblyManifest = {
-      version: newVersion,
-    };
-
-    // can't use saveAssemblyManifest because it will force the correct version
-    fs.writeFileSync(manifestFile, JSON.stringify(assemblyManifest));
-
-    expect(() => Manifest.loadAssemblyManifest(manifestFile)).toThrow(
-      /Cloud assembly schema version mismatch/
-    );
-  }
 });
 
 test('manifest load fails on invalid version', () => {
