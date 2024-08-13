@@ -34,7 +34,7 @@ export const project = new cdk.JsiiProject({
     javaPackage: 'software.amazon.awscdk.cloudassembly.schema',
     mavenArtifactId: 'cdk-cloud-assembly-schema',
     mavenGroupId: 'software.amazon.awscdk',
-    mavenEndpoint: 'https://s01.oss.sonatype.org',
+    mavenEndpoint: 'https://aws.oss.sonatype.org',
   },
   publishToNuget: {
     dotNetNamespace: 'Amazon.CDK.CloudAssembly.Schema',
@@ -46,8 +46,7 @@ export const project = new cdk.JsiiProject({
     module: 'aws_cdk.cloud_assembly_schema',
   },
   publishToGo: {
-    // The version at the end of the module name may be a number or v_NEXT in package.json
-    moduleName: `github.com/aws/aws-cdk-go/awscdk/cloudassemblyschema/awscdkcloudassemblyschema/v${Version.goVersion()}`,
+    moduleName: `github.com/cdklabs/cloud-assembly-schema-go`,
   },
   prettier: true,
   prettierOptions: {
@@ -78,15 +77,18 @@ export const project = new cdk.JsiiProject({
   minMajorVersion: Version.bump(),
 });
 
-project.addScripts({
-  'update-schema': 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"',
-});
+const updateSchema = 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"';
 
-project.preCompileTask.exec('yarn update-schema');
+project.preCompileTask.exec(updateSchema);
 project.addTask('pre-release', {
+  env: { RELEASE: 'true' },
   steps: [
     {
-      exec: 'yarn update-schema',
+      exec: updateSchema,
+    },
+    {
+      condition: `node -e "if (process.env.CI) process.exit(1)"`,
+      say: '✨ No changes created as a result of running pre-release or release should be committed. They will likely be reverted upon submission of the PR.',
     },
     {
       exec: 'yarn default',
@@ -94,11 +96,12 @@ project.addTask('pre-release', {
   ],
 });
 
-project.tasks
-  .tryFind('release')
-  ?.updateStep(4, { exec: "git diff --ignore-space-at-eol ':!.projen/tasks.json'" });
+project.tasks.tryFind('release')?.updateStep(4, {
+  exec: 'git restore package.json',
+});
 
 project.tasks.tryFind('release')?.exec('git restore .projen/tasks.json');
+project.tasks.tryFind('release')?.exec('git diff --ignore-space-at-eol');
 
 const packageJson = project.tryFindObjectFile('package.json');
 packageJson?.patch(

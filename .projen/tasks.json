@@ -233,15 +233,22 @@
       "description": "Prepare the project for compilation",
       "steps": [
         {
-          "exec": "yarn update-schema"
+          "exec": "ts-node --prefer-ts-exts -e \"require('./projenrc/update.ts').update()\""
         }
       ]
     },
     "pre-release": {
       "name": "pre-release",
+      "env": {
+        "RELEASE": "true"
+      },
       "steps": [
         {
-          "exec": "yarn update-schema"
+          "exec": "ts-node --prefer-ts-exts -e \"require('./projenrc/update.ts').update()\""
+        },
+        {
+          "condition": "node -e \"if (process.env.CI) process.exit(1)\"",
+          "say": "✨ No changes created as a result of running pre-release or release should be committed. They will likely be reverted upon submission of the PR."
         },
         {
           "exec": "yarn default"
@@ -268,10 +275,13 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git diff --ignore-space-at-eol ':!.projen/tasks.json'"
+          "exec": "git restore package.json"
         },
         {
           "exec": "git restore .projen/tasks.json"
+        },
+        {
+          "exec": "git diff --ignore-space-at-eol"
         }
       ]
     },
