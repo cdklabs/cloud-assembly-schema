@@ -17,6 +17,13 @@ export interface BootstrapRole {
   readonly assumeRoleExternalId?: string;
 
   /**
+   * The session tags to use for the assume role
+   *
+   * @default - No Session Tags
+   */
+  readonly assumeRoleSessionTags?: { [key: string]: string };
+
+  /**
    * Version of bootstrap stack required to use this role
    *
    * @default - No bootstrap stack required
@@ -80,6 +87,13 @@ export interface AwsCloudFormationStackProperties {
    * @default - No external ID
    */
   readonly assumeRoleExternalId?: string;
+
+  /**
+   * The session tags to use for the assume role
+   *
+   * @default - No Session Tags
+   */
+  readonly assumeRoleSessionTags?: { [key: string]: string };
 
   /**
    * The role that is passed to CloudFormation to execute the change set
