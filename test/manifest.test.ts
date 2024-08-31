@@ -54,6 +54,12 @@ test('manifest load fails on higher major version', () => {
   );
 });
 
+test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in bootstrap role', () => {
+  expect(() =>
+    Manifest.loadAssemblyManifest(fixture('BootstrapRole.assumeRoleAdditionalOptions.RoleArn'))
+  ).toThrow(/Cloud assembly schema version mismatch/);
+});
+
 // once we start introducing minor version bumps that are considered
 // non breaking, this test can be removed.
 test('manifest load succeeds on higher minor version', () => {

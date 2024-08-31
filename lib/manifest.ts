@@ -3,6 +3,7 @@ import * as jsonschema from 'jsonschema';
 import * as semver from 'semver';
 import * as assets from './assets';
 import * as assembly from './cloud-assembly';
+import { AssemblyManifest } from './cloud-assembly';
 import * as integ from './integ-tests';
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -147,11 +148,7 @@ export class Manifest {
     return this.loadAssemblyManifest(filePath);
   }
 
-  private static validate(
-    manifest: { version: string },
-    schema: jsonschema.Schema,
-    options?: LoadManifestOptions
-  ) {
+  private static validate(manifest: any, schema: jsonschema.Schema, options?: LoadManifestOptions) {
     function parseVersion(version: string) {
       const ver = semver.valid(version);
       if (!ver) {
@@ -189,6 +186,24 @@ export class Manifest {
 
     if (errors.length > 0) {
       throw new Error(`Invalid assembly manifest:\n${errors.map((e) => e.stack).join('\n')}`);
+    }
+
+    // now we are safe to cast and work on the expected type and perform
+    // custom validations
+    const typedManifest = manifest as AssemblyManifest;
+    for (const artifact of Object.values(typedManifest.artifacts ?? {})) {
+      switch (artifact.type) {
+        case 'aws:cloudformation:stack':
+          const properties = artifact.properties as assembly.AwsCloudFormationStackProperties;
+          if (properties.assumeRoleAdditionalOptions?.RoleArn) {
+            throw new Error(
+              `RoleArn is not allowed inside 'assumeRoleAdditionalOptions'. Use 'assumeRoleArn' instead`
+            );
+          }
+          break;
+        default:
+          break;
+      }
     }
   }
 
