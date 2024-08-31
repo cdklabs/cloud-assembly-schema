@@ -57,6 +57,28 @@ describe('Docker image asset', () => {
       });
     }).toThrow(/instance\.dockerImages\.asset\.source\.directory is not of a type\(s\) string/);
   });
+
+  test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in image destination', () => {
+    expect(() => {
+      validate({
+        version: Manifest.version(),
+        dockerImages: {
+          asset: {
+            source: {
+              directory: '.',
+            },
+            destinations: {
+              dest: {
+                region: 'us-north-20',
+                repositoryName: 'REPO',
+                imageTag: 'TAG',
+              },
+            },
+          },
+        },
+      });
+    }).toThrow(/instance\.dockerImages\.asset\.source\.directory is not of a type\(s\) string/);
+  });
 });
 
 describe('File asset', () => {

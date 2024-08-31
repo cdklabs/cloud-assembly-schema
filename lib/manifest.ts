@@ -72,6 +72,7 @@ export class Manifest {
    * @param filePath - output file path.
    */
   public static saveAssemblyManifest(manifest: assembly.AssemblyManifest, filePath: string) {
+    Manifest.validateAssemblyManifestAssumeRoleAdditionalOptions(manifest);
     Manifest.saveManifest(manifest, filePath, ASSEMBLY_SCHEMA, Manifest.patchStackTagsOnWrite);
   }
 
@@ -84,7 +85,14 @@ export class Manifest {
     filePath: string,
     options?: LoadManifestOptions
   ): assembly.AssemblyManifest {
-    return Manifest.loadManifest(filePath, ASSEMBLY_SCHEMA, Manifest.patchStackTagsOnRead, options);
+    const manifest = Manifest.loadManifest(
+      filePath,
+      ASSEMBLY_SCHEMA,
+      Manifest.patchStackTagsOnRead,
+      options
+    );
+    Manifest.validateAssemblyManifestAssumeRoleAdditionalOptions(manifest);
+    return manifest;
   }
 
   /**
@@ -94,6 +102,7 @@ export class Manifest {
    * @param filePath - output file path.
    */
   public static saveAssetManifest(manifest: assets.AssetManifest, filePath: string) {
+    Manifest.validateAssetManifestAssumeRoleAdditionalOptions(manifest);
     Manifest.saveManifest(manifest, filePath, ASSETS_SCHEMA, Manifest.patchStackTagsOnRead);
   }
 
@@ -103,7 +112,9 @@ export class Manifest {
    * @param filePath - path to the manifest file.
    */
   public static loadAssetManifest(filePath: string): assets.AssetManifest {
-    return this.loadManifest(filePath, ASSETS_SCHEMA);
+    const manifest = this.loadManifest(filePath, ASSETS_SCHEMA);
+    this.validateAssetManifestAssumeRoleAdditionalOptions(manifest);
+    return manifest;
   }
 
   /**
@@ -188,23 +199,8 @@ export class Manifest {
       throw new Error(`Invalid assembly manifest:\n${errors.map((e) => e.stack).join('\n')}`);
     }
 
-    // now we are safe to cast and work on the expected type and perform
-    // custom validations
-    const typedManifest = manifest as AssemblyManifest;
-    for (const artifact of Object.values(typedManifest.artifacts ?? {})) {
-      switch (artifact.type) {
-        case 'aws:cloudformation:stack':
-          const properties = artifact.properties as assembly.AwsCloudFormationStackProperties;
-          if (properties.assumeRoleAdditionalOptions?.RoleArn) {
-            throw new Error(
-              `RoleArn is not allowed inside 'assumeRoleAdditionalOptions'. Use 'assumeRoleArn' instead`
-            );
-          }
-          break;
-        default:
-          break;
-      }
-    }
+    // // now we are safe to cast and work on the expected type and perform custom validations
+    // this.validateStackArtifactAssumeRoleAdditionalOptions(manifest as AssemblyManifest);
   }
 
   private static saveManifest(
@@ -314,6 +310,70 @@ export class Manifest {
         } as assembly.ArtifactManifest);
       }),
     });
+  }
+
+  private static validateAssemblyManifestAssumeRoleAdditionalOptions(manifest: AssemblyManifest) {
+    for (const [aid, artifact] of Object.entries(manifest.artifacts ?? {})) {
+      switch (artifact.type) {
+        case 'aws:cloudformation:stack':
+          const properties = artifact.properties as assembly.AwsCloudFormationStackProperties;
+
+          if (properties.assumeRoleAdditionalOptions) {
+            this.validateAssumeRoleAdditionalOptions(
+              properties.assumeRoleAdditionalOptions,
+              `artifacts.${aid}.properties.assumeRoleAdditionalOptions`,
+              'assumeRoleArn',
+              'assumeRoleExternalId'
+            );
+          }
+
+          if (properties.lookupRole?.assumeRoleAdditionalOptions) {
+            this.validateAssumeRoleAdditionalOptions(
+              properties.lookupRole.assumeRoleAdditionalOptions,
+              `artifacts.${aid}.properties.lookupRole.assumeRoleAdditionalOptions`,
+              'arn',
+              'assumeRoleExternalId'
+            );
+          }
+
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private static validateAssetManifestAssumeRoleAdditionalOptions(manifest: assets.AssetManifest) {
+    for (const [aid, artifact] of Object.entries(manifest.files ?? {})) {
+      for (const [did, destination] of Object.entries(artifact.destinations ?? {})) {
+        if (destination.assumeRoleAdditionalOptions) {
+          this.validateAssumeRoleAdditionalOptions(
+            destination.assumeRoleAdditionalOptions,
+            `files.${aid}.destinations.${did}.assumeRoleAdditionalOptions`,
+            'assumeRoleArn',
+            'assumeRoleExternalId'
+          );
+        }
+      }
+    }
+  }
+
+  private static validateAssumeRoleAdditionalOptions(
+    options: { [key: string]: any },
+    basePath: string,
+    roleArnProperty: string,
+    externalIdProperty: string
+  ) {
+    if (options.RoleArn) {
+      throw new Error(
+        `RoleArn is not allowed inside '${basePath}.assumeRoleAdditionalOptions'. Use '${basePath}.${roleArnProperty}' instead.`
+      );
+    }
+    if (options.ExternalId) {
+      throw new Error(
+        `ExternalId is not allowed inside '${basePath}.assumeRoleAdditionalOptions'. Use '${basePath}.${externalIdProperty}' instead.`
+      );
+    }
   }
 
   private constructor() {}

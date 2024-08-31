@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { AssemblyManifest, Manifest, StackTagsMetadataEntry } from '../lib';
+import { ArtifactType, AssemblyManifest, Manifest, StackTagsMetadataEntry } from '../lib';
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -31,6 +31,38 @@ test('manifest save', () => {
   });
 });
 
+test('manifest save fails when assumeRoleAdditionalOptions.RoleArn is used in deploy role', () => {
+  const assemblyManifest: AssemblyManifest = {
+    version: 'version',
+    artifacts: {
+      'aws-cdk-sqs': {
+        type: ArtifactType.AWS_CLOUDFORMATION_STACK,
+        environment: 'aws://unknown-account/unknown-region',
+        properties: {
+          templateFile: 'aws-cdk-sqs.template.json',
+          validateOnSynth: false,
+          assumeRoleArn:
+            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}',
+          assumeRoleAdditionalOptions: {
+            RoleArn: 'some-role-arn',
+          },
+          cloudFormationExecutionRoleArn:
+            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}',
+          stackTemplateAssetObjectUrl:
+            's3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7fd5f7d37f2f344aa43e18636af702436c91c871b1380d772857c431c603bb27.json',
+          requiresBootstrapStackVersion: 6,
+          bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
+        },
+        displayName: 'aws-cdk-sqs',
+      },
+    },
+  };
+
+  expect(() => Manifest.saveAssemblyManifest(assemblyManifest, 'some-path')).toThrow(
+    /RoleArn is not allowed inside 'assumeRoleAdditionalOptions'. Use 'assumeRoleArn' instead./
+  );
+});
+
 test('manifest load', () => {
   const loaded = Manifest.loadAssemblyManifest(fixture('only-version'));
   expect(loaded).toMatchSnapshot();
@@ -54,10 +86,40 @@ test('manifest load fails on higher major version', () => {
   );
 });
 
+test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in deploy role', () => {
+  expect(() =>
+    Manifest.loadAssemblyManifest(fixture('StackProperties.assumeRoleAdditionalOptions.RoleArn'))
+  ).toThrow(
+    /RoleArn is not allowed inside 'assumeRoleAdditionalOptions'. Use 'assumeRoleArn' instead./
+  );
+});
+
+test('manifest load fails when assumeRoleAdditionalOptions.ExternalId is used in deploy role', () => {
+  expect(() =>
+    Manifest.loadAssemblyManifest(fixture('StackProperties.assumeRoleAdditionalOptions.ExternalId'))
+  ).toThrow(
+    /ExternalId is not allowed inside 'assumeRoleAdditionalOptions'. Use 'assumeRoleExternalId' instead./
+  );
+});
+
 test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in bootstrap role', () => {
   expect(() =>
-    Manifest.loadAssemblyManifest(fixture('BootstrapRole.assumeRoleAdditionalOptions.RoleArn'))
-  ).toThrow(/Cloud assembly schema version mismatch/);
+    Manifest.loadAssemblyManifest(
+      fixture('StackProperties.BootstrapRole.assumeRoleAdditionalOptions.RoleArn')
+    )
+  ).toThrow(
+    /RoleArn is not allowed inside 'lookupRole.assumeRoleAdditionalOptions'. Use 'lookupRole.arn' instead./
+  );
+});
+
+test('manifest load fails when assumeRoleAdditionalOptions.ExternalId is used in bootstrap role', () => {
+  expect(() =>
+    Manifest.loadAssemblyManifest(
+      fixture('StackProperties.BootstrapRole.assumeRoleAdditionalOptions.ExternalId')
+    )
+  ).toThrow(
+    /ExternalId is not allowed inside 'lookupRole.assumeRoleAdditionalOptions'. Use 'lookupRole.assumeRoleExternalId' instead./
+  );
 });
 
 // once we start introducing minor version bumps that are considered
