@@ -6,7 +6,7 @@ import { FileAssetPackaging, Manifest } from '../lib';
 describe('Docker image asset', () => {
   test('valid input', () => {
     expect(() => {
-      validate({
+      load({
         version: Manifest.version(),
         dockerImages: {
           asset: {
@@ -40,7 +40,7 @@ describe('Docker image asset', () => {
 
   test('invalid input', () => {
     expect(() => {
-      validate({
+      load({
         version: Manifest.version(),
         dockerImages: {
           asset: {
@@ -58,26 +58,65 @@ describe('Docker image asset', () => {
     }).toThrow(/instance\.dockerImages\.asset\.source\.directory is not of a type\(s\) string/);
   });
 
-  test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in image destination', () => {
-    expect(() => {
-      validate({
-        version: Manifest.version(),
-        dockerImages: {
-          asset: {
-            source: {
-              directory: '.',
-            },
-            destinations: {
-              dest: {
-                region: 'us-north-20',
-                repositoryName: 'REPO',
-                imageTag: 'TAG',
+  test('cannot use assumeRoleAdditionalOptions.RoleArn', () => {
+    const manifest = {
+      version: Manifest.version(),
+      dockerImages: {
+        asset: {
+          source: {
+            directory: '.',
+          },
+          destinations: {
+            dest: {
+              region: 'us-north-20',
+              repositoryName: 'REPO',
+              imageTag: 'TAG',
+              assumeRoleAdditionalOptions: {
+                RoleArn: 'some-role-arn',
               },
             },
           },
         },
-      });
-    }).toThrow(/instance\.dockerImages\.asset\.source\.directory is not of a type\(s\) string/);
+      },
+    };
+    const expectedError = `RoleArn is not allowed inside 'dockerImages.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'dockerImages.asset.destinations.dest.assumeRoleArn' instead.`;
+    expect(() => {
+      load(manifest);
+    }).toThrow(expectedError);
+    expect(() => {
+      save(manifest, 'somewhere');
+    }).toThrow(expectedError);
+  });
+
+  test('cannot use assumeRoleAdditionalOptions.ExternalId', () => {
+    const manifest = {
+      version: Manifest.version(),
+      dockerImages: {
+        asset: {
+          source: {
+            directory: '.',
+          },
+          destinations: {
+            dest: {
+              region: 'us-north-20',
+              repositoryName: 'REPO',
+              imageTag: 'TAG',
+              assumeRoleAdditionalOptions: {
+                ExternalId: 'some-external-id',
+              },
+            },
+          },
+        },
+      },
+    };
+    const expectedError = `ExternalId is not allowed inside 'dockerImages.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'dockerImages.asset.destinations.dest.assumeRoleExternalId' instead.`;
+
+    expect(() => {
+      load(manifest);
+    }).toThrow(expectedError);
+    expect(() => {
+      save(manifest, 'somewhere');
+    }).toThrow(expectedError);
   });
 });
 
@@ -85,7 +124,7 @@ describe('File asset', () => {
   describe('valid input', () => {
     test('without packaging', () => {
       expect(() => {
-        validate({
+        load({
           version: Manifest.version(),
           files: {
             asset: {
@@ -120,7 +159,7 @@ describe('File asset', () => {
     for (const packaging of Object.values(FileAssetPackaging)) {
       test(`with "${packaging}" packaging`, () => {
         expect(() => {
-          validate({
+          load({
             version: Manifest.version(),
             files: {
               asset: {
@@ -146,7 +185,7 @@ describe('File asset', () => {
   describe('invalid input', () => {
     test('bad "source.path" property', () => {
       expect(() => {
-        validate({
+        load({
           version: Manifest.version(),
           files: {
             asset: {
@@ -180,7 +219,7 @@ describe('File asset', () => {
 
     test('bad "source.packaging" property', () => {
       expect(() => {
-        validate({
+        load({
           version: Manifest.version(),
           files: {
             asset: {
@@ -200,10 +239,71 @@ describe('File asset', () => {
         });
       }).toThrow(/instance\.files\.asset\.source\.packaging is not one of enum values: file,zip/);
     });
+
+    test('cannot use assumeRoleAdditionalOptions.RoleArn', () => {
+      const manifest = {
+        version: Manifest.version(),
+        files: {
+          asset: {
+            source: {
+              path: 'a/b/c',
+            },
+            destinations: {
+              dest: {
+                region: 'us-north-20',
+                bucketName: 'Bouquet',
+                objectKey: 'key',
+                assumeRoleAdditionalOptions: {
+                  RoleArn: 'some-role-arn',
+                },
+              },
+            },
+          },
+        },
+      };
+      const expectedError = `RoleArn is not allowed inside 'files.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'files.asset.destinations.dest.assumeRoleArn' instead.`;
+      expect(() => {
+        load(manifest);
+      }).toThrow(expectedError);
+      expect(() => {
+        save(manifest, 'somewhere');
+      }).toThrow(expectedError);
+    });
+
+    test('cannot use assumeRoleAdditionalOptions.ExternalId', () => {
+      const manifest = {
+        version: Manifest.version(),
+        files: {
+          asset: {
+            source: {
+              path: 'a/b/c',
+            },
+            destinations: {
+              dest: {
+                region: 'us-north-20',
+                bucketName: 'Bouquet',
+                objectKey: 'key',
+                assumeRoleAdditionalOptions: {
+                  ExternalId: 'some-external-id',
+                },
+              },
+            },
+          },
+        },
+      };
+      const expectedError = `ExternalId is not allowed inside 'files.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'files.asset.destinations.dest.assumeRoleExternalId' instead.`;
+
+      expect(() => {
+        load(manifest);
+      }).toThrow(expectedError);
+      expect(() => {
+        save(manifest, 'somewhere');
+      }).toThrow(expectedError);
+    });
   });
 });
 
-function validate(manifest: any) {
+function load(manifest: any) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'assets.test.'));
   const filePath = path.join(dir, 'manifest.json');
   fs.writeFileSync(filePath, JSON.stringify(manifest, undefined, 2));
@@ -213,4 +313,10 @@ function validate(manifest: any) {
     fs.unlinkSync(filePath);
     fs.rmdirSync(dir);
   }
+}
+
+function save(manifest: any, to: string) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'assets.test.'));
+  const filePath = path.join(dir, to);
+  Manifest.saveAssetManifest(manifest, filePath);
 }

@@ -198,9 +198,6 @@ export class Manifest {
     if (errors.length > 0) {
       throw new Error(`Invalid assembly manifest:\n${errors.map((e) => e.stack).join('\n')}`);
     }
-
-    // // now we are safe to cast and work on the expected type and perform custom validations
-    // this.validateStackArtifactAssumeRoleAdditionalOptions(manifest as AssemblyManifest);
   }
 
   private static saveManifest(
@@ -314,6 +311,9 @@ export class Manifest {
 
   private static validateAssemblyManifestAssumeRoleAdditionalOptions(manifest: AssemblyManifest) {
     for (const [aid, artifact] of Object.entries(manifest.artifacts ?? {})) {
+      if (!artifact.properties) {
+        continue;
+      }
       switch (artifact.type) {
         case 'aws:cloudformation:stack':
           const properties = artifact.properties as assembly.AwsCloudFormationStackProperties;
@@ -321,7 +321,7 @@ export class Manifest {
           if (properties.assumeRoleAdditionalOptions) {
             this.validateAssumeRoleAdditionalOptions(
               properties.assumeRoleAdditionalOptions,
-              `artifacts.${aid}.properties.assumeRoleAdditionalOptions`,
+              `artifacts.${aid}.properties`,
               'assumeRoleArn',
               'assumeRoleExternalId'
             );
@@ -330,7 +330,7 @@ export class Manifest {
           if (properties.lookupRole?.assumeRoleAdditionalOptions) {
             this.validateAssumeRoleAdditionalOptions(
               properties.lookupRole.assumeRoleAdditionalOptions,
-              `artifacts.${aid}.properties.lookupRole.assumeRoleAdditionalOptions`,
+              `artifacts.${aid}.properties.lookupRole`,
               'arn',
               'assumeRoleExternalId'
             );
@@ -349,7 +349,19 @@ export class Manifest {
         if (destination.assumeRoleAdditionalOptions) {
           this.validateAssumeRoleAdditionalOptions(
             destination.assumeRoleAdditionalOptions,
-            `files.${aid}.destinations.${did}.assumeRoleAdditionalOptions`,
+            `files.${aid}.destinations.${did}`,
+            'assumeRoleArn',
+            'assumeRoleExternalId'
+          );
+        }
+      }
+    }
+    for (const [aid, artifact] of Object.entries(manifest.dockerImages ?? {})) {
+      for (const [did, destination] of Object.entries(artifact.destinations ?? {})) {
+        if (destination.assumeRoleAdditionalOptions) {
+          this.validateAssumeRoleAdditionalOptions(
+            destination.assumeRoleAdditionalOptions,
+            `dockerImages.${aid}.destinations.${did}`,
             'assumeRoleArn',
             'assumeRoleExternalId'
           );
