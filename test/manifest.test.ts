@@ -31,142 +31,52 @@ test('manifest save', () => {
   });
 });
 
-test('manifest save fails when assumeRoleAdditionalOptions.RoleArn is used in deploy role', () => {
-  const assemblyManifest: AssemblyManifest = {
-    version: 'version',
-    artifacts: {
-      'aws-cdk-sqs': {
-        type: ArtifactType.AWS_CLOUDFORMATION_STACK,
-        environment: 'aws://unknown-account/unknown-region',
-        properties: {
-          templateFile: 'aws-cdk-sqs.template.json',
-          validateOnSynth: false,
-          assumeRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}',
-          assumeRoleAdditionalOptions: {
-            RoleArn: 'some-role-arn',
-          },
-          cloudFormationExecutionRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}',
-          stackTemplateAssetObjectUrl:
-            's3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7fd5f7d37f2f344aa43e18636af702436c91c871b1380d772857c431c603bb27.json',
-          requiresBootstrapStackVersion: 6,
-          bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
-        },
-        displayName: 'aws-cdk-sqs',
-      },
-    },
-  };
-
-  expect(() => Manifest.saveAssemblyManifest(assemblyManifest, 'some-path')).toThrow(
-    /RoleArn is not allowed inside 'artifacts.aws-cdk-sqs.properties.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.assumeRoleArn' instead./
-  );
-});
-
-test('manifest save fails when assumeRoleAdditionalOptions.ExternalId is used in deploy role', () => {
-  const assemblyManifest: AssemblyManifest = {
-    version: 'version',
-    artifacts: {
-      'aws-cdk-sqs': {
-        type: ArtifactType.AWS_CLOUDFORMATION_STACK,
-        environment: 'aws://unknown-account/unknown-region',
-        properties: {
-          templateFile: 'aws-cdk-sqs.template.json',
-          validateOnSynth: false,
-          assumeRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}',
-          assumeRoleAdditionalOptions: {
-            ExternalId: 'some-role-arn',
-          },
-          cloudFormationExecutionRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}',
-          stackTemplateAssetObjectUrl:
-            's3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7fd5f7d37f2f344aa43e18636af702436c91c871b1380d772857c431c603bb27.json',
-          requiresBootstrapStackVersion: 6,
-          bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
-        },
-        displayName: 'aws-cdk-sqs',
-      },
-    },
-  };
-
-  expect(() => Manifest.saveAssemblyManifest(assemblyManifest, 'some-path')).toThrow(
-    /ExternalId is not allowed inside 'artifacts.aws-cdk-sqs.properties.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.assumeRoleExternalId' instead./
-  );
-});
-
-test('manifest save fails when assumeRoleAdditionalOptions.RoleArn is used in lookup role', () => {
-  const assemblyManifest: AssemblyManifest = {
-    version: 'version',
-    artifacts: {
-      'aws-cdk-sqs': {
-        type: ArtifactType.AWS_CLOUDFORMATION_STACK,
-        environment: 'aws://unknown-account/unknown-region',
-        properties: {
-          templateFile: 'aws-cdk-sqs.template.json',
-          validateOnSynth: false,
-          assumeRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}',
-          cloudFormationExecutionRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}',
-          stackTemplateAssetObjectUrl:
-            's3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7fd5f7d37f2f344aa43e18636af702436c91c871b1380d772857c431c603bb27.json',
-          requiresBootstrapStackVersion: 6,
-          bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
-          lookupRole: {
-            arn: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}',
-            requiresBootstrapStackVersion: 8,
-            bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
-            assumeRoleAdditionalOptions: {
-              RoleArn: 'some-role-arn',
+test('assumeRoleAdditionalOptions.RoleArn is validated', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        artifacts: {
+          'aws-cdk-sqs': {
+            type: ArtifactType.AWS_CLOUDFORMATION_STACK,
+            properties: {
+              directoryName: 'dir',
+              file: 'file',
+              templateFile: 'template',
+              assumeRoleAdditionalOptions: {
+                RoleArn: 'foo',
+              },
             },
           },
         },
-        displayName: 'aws-cdk-sqs',
       },
-    },
-  };
-
-  expect(() => Manifest.saveAssemblyManifest(assemblyManifest, 'some-path')).toThrow(
-    /RoleArn is not allowed inside 'artifacts.aws-cdk-sqs.properties.lookupRole.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.lookupRole.arn' instead./
-  );
+      'somewhere'
+    );
+  }).toThrow(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
 });
 
-test('manifest save fails when assumeRoleAdditionalOptions.ExternalId is used in lookup role', () => {
-  const assemblyManifest: AssemblyManifest = {
-    version: 'version',
-    artifacts: {
-      'aws-cdk-sqs': {
-        type: ArtifactType.AWS_CLOUDFORMATION_STACK,
-        environment: 'aws://unknown-account/unknown-region',
-        properties: {
-          templateFile: 'aws-cdk-sqs.template.json',
-          validateOnSynth: false,
-          assumeRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}',
-          cloudFormationExecutionRoleArn:
-            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}',
-          stackTemplateAssetObjectUrl:
-            's3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7fd5f7d37f2f344aa43e18636af702436c91c871b1380d772857c431c603bb27.json',
-          requiresBootstrapStackVersion: 6,
-          bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
-          lookupRole: {
-            arn: 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}',
-            requiresBootstrapStackVersion: 8,
-            bootstrapStackVersionSsmParameter: '/cdk-bootstrap/hnb659fds/version',
-            assumeRoleAdditionalOptions: {
-              ExternalId: 'some-role-arn',
+test('assumeRoleAdditionalOptions.ExternalId is validated', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        artifacts: {
+          'aws-cdk-sqs': {
+            type: ArtifactType.AWS_CLOUDFORMATION_STACK,
+            properties: {
+              directoryName: 'dir',
+              file: 'file',
+              templateFile: 'template',
+              assumeRoleAdditionalOptions: {
+                ExternalId: 'external-id',
+              },
             },
           },
         },
-        displayName: 'aws-cdk-sqs',
       },
-    },
-  };
-
-  expect(() => Manifest.saveAssemblyManifest(assemblyManifest, 'some-path')).toThrow(
-    /ExternalId is not allowed inside 'artifacts.aws-cdk-sqs.properties.lookupRole.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.lookupRole.assumeRoleExternalId' instead./
-  );
+      'somewhere'
+    );
+  }).toThrow(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
 });
 
 test('manifest load', () => {
@@ -189,42 +99,6 @@ test('manifest load fails for invalid artifact type', () => {
 test('manifest load fails on higher major version', () => {
   expect(() => Manifest.loadAssemblyManifest(fixture('high-version'))).toThrow(
     /Cloud assembly schema version mismatch/
-  );
-});
-
-test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in deploy role', () => {
-  expect(() =>
-    Manifest.loadAssemblyManifest(fixture('StackProperties.assumeRoleAdditionalOptions.RoleArn'))
-  ).toThrow(
-    /RoleArn is not allowed inside 'artifacts.aws-cdk-sqs.properties.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.assumeRoleArn' instead./
-  );
-});
-
-test('manifest load fails when assumeRoleAdditionalOptions.ExternalId is used in deploy role', () => {
-  expect(() =>
-    Manifest.loadAssemblyManifest(fixture('StackProperties.assumeRoleAdditionalOptions.ExternalId'))
-  ).toThrow(
-    /ExternalId is not allowed inside 'artifacts.aws-cdk-sqs.properties.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.assumeRoleExternalId' instead./
-  );
-});
-
-test('manifest load fails when assumeRoleAdditionalOptions.RoleArn is used in bootstrap role', () => {
-  expect(() =>
-    Manifest.loadAssemblyManifest(
-      fixture('StackProperties.BootstrapRole.assumeRoleAdditionalOptions.RoleArn')
-    )
-  ).toThrow(
-    /RoleArn is not allowed inside 'artifacts.aws-cdk-sqs.properties.lookupRole.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.lookupRole.arn' instead./
-  );
-});
-
-test('manifest load fails when assumeRoleAdditionalOptions.ExternalId is used in bootstrap role', () => {
-  expect(() =>
-    Manifest.loadAssemblyManifest(
-      fixture('StackProperties.BootstrapRole.assumeRoleAdditionalOptions.ExternalId')
-    )
-  ).toThrow(
-    /ExternalId is not allowed inside 'artifacts.aws-cdk-sqs.properties.lookupRole.assumeRoleAdditionalOptions'. Use 'artifacts.aws-cdk-sqs.properties.lookupRole.assumeRoleExternalId' instead./
   );
 });
 

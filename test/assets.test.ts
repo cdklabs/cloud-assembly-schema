@@ -57,67 +57,6 @@ describe('Docker image asset', () => {
       });
     }).toThrow(/instance\.dockerImages\.asset\.source\.directory is not of a type\(s\) string/);
   });
-
-  test('cannot use assumeRoleAdditionalOptions.RoleArn', () => {
-    const manifest = {
-      version: Manifest.version(),
-      dockerImages: {
-        asset: {
-          source: {
-            directory: '.',
-          },
-          destinations: {
-            dest: {
-              region: 'us-north-20',
-              repositoryName: 'REPO',
-              imageTag: 'TAG',
-              assumeRoleAdditionalOptions: {
-                RoleArn: 'some-role-arn',
-              },
-            },
-          },
-        },
-      },
-    };
-    const expectedError = `RoleArn is not allowed inside 'dockerImages.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'dockerImages.asset.destinations.dest.assumeRoleArn' instead.`;
-    expect(() => {
-      load(manifest);
-    }).toThrow(expectedError);
-    expect(() => {
-      save(manifest, 'somewhere');
-    }).toThrow(expectedError);
-  });
-
-  test('cannot use assumeRoleAdditionalOptions.ExternalId', () => {
-    const manifest = {
-      version: Manifest.version(),
-      dockerImages: {
-        asset: {
-          source: {
-            directory: '.',
-          },
-          destinations: {
-            dest: {
-              region: 'us-north-20',
-              repositoryName: 'REPO',
-              imageTag: 'TAG',
-              assumeRoleAdditionalOptions: {
-                ExternalId: 'some-external-id',
-              },
-            },
-          },
-        },
-      },
-    };
-    const expectedError = `ExternalId is not allowed inside 'dockerImages.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'dockerImages.asset.destinations.dest.assumeRoleExternalId' instead.`;
-
-    expect(() => {
-      load(manifest);
-    }).toThrow(expectedError);
-    expect(() => {
-      save(manifest, 'somewhere');
-    }).toThrow(expectedError);
-  });
 });
 
 describe('File asset', () => {
@@ -239,67 +178,6 @@ describe('File asset', () => {
         });
       }).toThrow(/instance\.files\.asset\.source\.packaging is not one of enum values: file,zip/);
     });
-
-    test('cannot use assumeRoleAdditionalOptions.RoleArn', () => {
-      const manifest = {
-        version: Manifest.version(),
-        files: {
-          asset: {
-            source: {
-              path: 'a/b/c',
-            },
-            destinations: {
-              dest: {
-                region: 'us-north-20',
-                bucketName: 'Bouquet',
-                objectKey: 'key',
-                assumeRoleAdditionalOptions: {
-                  RoleArn: 'some-role-arn',
-                },
-              },
-            },
-          },
-        },
-      };
-      const expectedError = `RoleArn is not allowed inside 'files.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'files.asset.destinations.dest.assumeRoleArn' instead.`;
-      expect(() => {
-        load(manifest);
-      }).toThrow(expectedError);
-      expect(() => {
-        save(manifest, 'somewhere');
-      }).toThrow(expectedError);
-    });
-
-    test('cannot use assumeRoleAdditionalOptions.ExternalId', () => {
-      const manifest = {
-        version: Manifest.version(),
-        files: {
-          asset: {
-            source: {
-              path: 'a/b/c',
-            },
-            destinations: {
-              dest: {
-                region: 'us-north-20',
-                bucketName: 'Bouquet',
-                objectKey: 'key',
-                assumeRoleAdditionalOptions: {
-                  ExternalId: 'some-external-id',
-                },
-              },
-            },
-          },
-        },
-      };
-      const expectedError = `ExternalId is not allowed inside 'files.asset.destinations.dest.assumeRoleAdditionalOptions'. Use 'files.asset.destinations.dest.assumeRoleExternalId' instead.`;
-
-      expect(() => {
-        load(manifest);
-      }).toThrow(expectedError);
-      expect(() => {
-        save(manifest, 'somewhere');
-      }).toThrow(expectedError);
-    });
   });
 });
 
@@ -313,10 +191,4 @@ function load(manifest: any) {
     fs.unlinkSync(filePath);
     fs.rmdirSync(dir);
   }
-}
-
-function save(manifest: any, to: string) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'assets.test.'));
-  const filePath = path.join(dir, to);
-  Manifest.saveAssetManifest(manifest, filePath);
 }

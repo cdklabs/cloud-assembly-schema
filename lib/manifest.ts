@@ -3,7 +3,6 @@ import * as jsonschema from 'jsonschema';
 import * as semver from 'semver';
 import * as assets from './assets';
 import * as assembly from './cloud-assembly';
-import { AssemblyManifest } from './cloud-assembly';
 import * as integ from './integ-tests';
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -72,7 +71,6 @@ export class Manifest {
    * @param filePath - output file path.
    */
   public static saveAssemblyManifest(manifest: assembly.AssemblyManifest, filePath: string) {
-    Manifest.validateAssemblyManifestAssumeRoleAdditionalOptions(manifest);
     Manifest.saveManifest(manifest, filePath, ASSEMBLY_SCHEMA, Manifest.patchStackTagsOnWrite);
   }
 
@@ -85,14 +83,7 @@ export class Manifest {
     filePath: string,
     options?: LoadManifestOptions
   ): assembly.AssemblyManifest {
-    const manifest = Manifest.loadManifest(
-      filePath,
-      ASSEMBLY_SCHEMA,
-      Manifest.patchStackTagsOnRead,
-      options
-    );
-    Manifest.validateAssemblyManifestAssumeRoleAdditionalOptions(manifest);
-    return manifest;
+    return Manifest.loadManifest(filePath, ASSEMBLY_SCHEMA, Manifest.patchStackTagsOnRead, options);
   }
 
   /**
@@ -102,7 +93,6 @@ export class Manifest {
    * @param filePath - output file path.
    */
   public static saveAssetManifest(manifest: assets.AssetManifest, filePath: string) {
-    Manifest.validateAssetManifestAssumeRoleAdditionalOptions(manifest);
     Manifest.saveManifest(manifest, filePath, ASSETS_SCHEMA, Manifest.patchStackTagsOnRead);
   }
 
@@ -112,9 +102,7 @@ export class Manifest {
    * @param filePath - path to the manifest file.
    */
   public static loadAssetManifest(filePath: string): assets.AssetManifest {
-    const manifest = this.loadManifest(filePath, ASSETS_SCHEMA);
-    this.validateAssetManifestAssumeRoleAdditionalOptions(manifest);
-    return manifest;
+    return this.loadManifest(filePath, ASSETS_SCHEMA);
   }
 
   /**
@@ -187,7 +175,8 @@ export class Manifest {
       nestedErrors: true,
 
       allowUnknownAttributes: false,
-    } as any);
+      preValidateProperty: Manifest.validateAssumeRoleAdditionalOptions,
+    });
 
     let errors = result.errors;
     if (options?.skipEnumCheck) {
@@ -259,6 +248,26 @@ export class Manifest {
   }
 
   /**
+   * Validate the assumeRoleAdditionalOptions doesn't contain nor `ExternalId` neither `RoleArn`, as they
+   * have dedicated properties preceding this (e.g `assumeRoleArn` and `assumeRoleExternalId`).
+   */
+  private static validateAssumeRoleAdditionalOptions(
+    _instance: any,
+    _key: string,
+    _schema: jsonschema.Schema,
+    _options: jsonschema.Options,
+    _ctx: jsonschema.SchemaContext
+  ) {
+    const assumeRoleOptions = _instance.assumeRoleAdditionalOptions;
+    if (assumeRoleOptions?.RoleArn) {
+      throw new Error(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
+    }
+    if (assumeRoleOptions?.ExternalId) {
+      throw new Error(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
+    }
+  }
+
+  /**
    * See explanation on `patchStackTagsOnRead`
    *
    * Translate stack tags metadata if it has the "right" casing.
@@ -307,85 +316,6 @@ export class Manifest {
         } as assembly.ArtifactManifest);
       }),
     });
-  }
-
-  private static validateAssemblyManifestAssumeRoleAdditionalOptions(manifest: AssemblyManifest) {
-    for (const [aid, artifact] of Object.entries(manifest.artifacts ?? {})) {
-      if (!artifact.properties) {
-        continue;
-      }
-      switch (artifact.type) {
-        case 'aws:cloudformation:stack':
-          const properties = artifact.properties as assembly.AwsCloudFormationStackProperties;
-
-          if (properties.assumeRoleAdditionalOptions) {
-            this.validateAssumeRoleAdditionalOptions(
-              properties.assumeRoleAdditionalOptions,
-              `artifacts.${aid}.properties`,
-              'assumeRoleArn',
-              'assumeRoleExternalId'
-            );
-          }
-
-          if (properties.lookupRole?.assumeRoleAdditionalOptions) {
-            this.validateAssumeRoleAdditionalOptions(
-              properties.lookupRole.assumeRoleAdditionalOptions,
-              `artifacts.${aid}.properties.lookupRole`,
-              'arn',
-              'assumeRoleExternalId'
-            );
-          }
-
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static validateAssetManifestAssumeRoleAdditionalOptions(manifest: assets.AssetManifest) {
-    for (const [aid, artifact] of Object.entries(manifest.files ?? {})) {
-      for (const [did, destination] of Object.entries(artifact.destinations ?? {})) {
-        if (destination.assumeRoleAdditionalOptions) {
-          this.validateAssumeRoleAdditionalOptions(
-            destination.assumeRoleAdditionalOptions,
-            `files.${aid}.destinations.${did}`,
-            'assumeRoleArn',
-            'assumeRoleExternalId'
-          );
-        }
-      }
-    }
-    for (const [aid, artifact] of Object.entries(manifest.dockerImages ?? {})) {
-      for (const [did, destination] of Object.entries(artifact.destinations ?? {})) {
-        if (destination.assumeRoleAdditionalOptions) {
-          this.validateAssumeRoleAdditionalOptions(
-            destination.assumeRoleAdditionalOptions,
-            `dockerImages.${aid}.destinations.${did}`,
-            'assumeRoleArn',
-            'assumeRoleExternalId'
-          );
-        }
-      }
-    }
-  }
-
-  private static validateAssumeRoleAdditionalOptions(
-    options: { [key: string]: any },
-    basePath: string,
-    roleArnProperty: string,
-    externalIdProperty: string
-  ) {
-    if (options.RoleArn) {
-      throw new Error(
-        `RoleArn is not allowed inside '${basePath}.assumeRoleAdditionalOptions'. Use '${basePath}.${roleArnProperty}' instead.`
-      );
-    }
-    if (options.ExternalId) {
-      throw new Error(
-        `ExternalId is not allowed inside '${basePath}.assumeRoleAdditionalOptions'. Use '${basePath}.${externalIdProperty}' instead.`
-      );
-    }
   }
 
   private constructor() {}
