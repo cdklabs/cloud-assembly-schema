@@ -6,7 +6,7 @@ import { FileAssetPackaging, Manifest } from '../lib';
 describe('Docker image asset', () => {
   test('valid input', () => {
     expect(() => {
-      load({
+      validate({
         version: Manifest.version(),
         dockerImages: {
           asset: {
@@ -40,7 +40,7 @@ describe('Docker image asset', () => {
 
   test('invalid input', () => {
     expect(() => {
-      load({
+      validate({
         version: Manifest.version(),
         dockerImages: {
           asset: {
@@ -63,7 +63,7 @@ describe('File asset', () => {
   describe('valid input', () => {
     test('without packaging', () => {
       expect(() => {
-        load({
+        validate({
           version: Manifest.version(),
           files: {
             asset: {
@@ -98,7 +98,7 @@ describe('File asset', () => {
     for (const packaging of Object.values(FileAssetPackaging)) {
       test(`with "${packaging}" packaging`, () => {
         expect(() => {
-          load({
+          validate({
             version: Manifest.version(),
             files: {
               asset: {
@@ -124,7 +124,7 @@ describe('File asset', () => {
   describe('invalid input', () => {
     test('bad "source.path" property', () => {
       expect(() => {
-        load({
+        validate({
           version: Manifest.version(),
           files: {
             asset: {
@@ -158,7 +158,7 @@ describe('File asset', () => {
 
     test('bad "source.packaging" property', () => {
       expect(() => {
-        load({
+        validate({
           version: Manifest.version(),
           files: {
             asset: {
@@ -181,7 +181,7 @@ describe('File asset', () => {
   });
 });
 
-function load(manifest: any) {
+function validate(manifest: any) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'assets.test.'));
   const filePath = path.join(dir, 'manifest.json');
   fs.writeFileSync(filePath, JSON.stringify(manifest, undefined, 2));

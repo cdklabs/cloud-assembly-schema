@@ -248,17 +248,17 @@ export class Manifest {
   }
 
   /**
-   * Validate the assumeRoleAdditionalOptions doesn't contain nor `ExternalId` neither `RoleArn`, as they
+   * Validates that `assumeRoleAdditionalOptions` doesn't contain nor `ExternalId` neither `RoleArn`, as they
    * have dedicated properties preceding this (e.g `assumeRoleArn` and `assumeRoleExternalId`).
    */
   private static validateAssumeRoleAdditionalOptions(
-    _instance: any,
+    instance: any,
     _key: string,
     _schema: jsonschema.Schema,
     _options: jsonschema.Options,
     _ctx: jsonschema.SchemaContext
   ) {
-    const assumeRoleOptions = _instance.assumeRoleAdditionalOptions;
+    const assumeRoleOptions = instance.assumeRoleAdditionalOptions;
     if (assumeRoleOptions?.RoleArn) {
       throw new Error(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
     }
