@@ -83,7 +83,7 @@
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "homepage": "https://github.com/cdklabs/cloud-assembly-schema",
-  "version": "0.0.0",
+  "version": "36.0.5",
   "types": "lib/index.d.ts",
   "stability": "stable",
   "jsii": {

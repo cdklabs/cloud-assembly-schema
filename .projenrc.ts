@@ -77,6 +77,9 @@ export const project = new cdk.JsiiProject({
   minMajorVersion: Version.bump(),
 });
 
+// TODO dev only - remove before merge.
+project.package.addField('version', '36.0.5');
+
 const updateSchema = 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"';
 
 project.preCompileTask.exec(updateSchema);
