@@ -409,7 +409,7 @@
                     "type": "string"
                 },
                 "assumeRoleAdditionalOptions": {
-                    "description": "Additional options to pass to STS when assuming the role.\n\n- `RoleArn` should not be used. Use the dedicated `assumeRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead. (Default - No additional options.)",
+                    "description": "Additional options to pass to STS when assuming the role.\n\n- `RoleArn` should not be used. Use the dedicated `arn` property instead.\n- `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
                 },

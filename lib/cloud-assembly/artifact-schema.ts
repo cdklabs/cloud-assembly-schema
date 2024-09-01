@@ -19,7 +19,7 @@ export interface BootstrapRole {
   /**
    * Additional options to pass to STS when assuming the role.
    *
-   * - `RoleArn` should not be used. Use the dedicated `assumeRoleArn` property instead.
+   * - `RoleArn` should not be used. Use the dedicated `arn` property instead.
    * - `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead.
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
