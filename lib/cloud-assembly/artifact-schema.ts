@@ -21,7 +21,6 @@ export interface BootstrapRole {
    *
    * - `RoleArn` should not be used. Use the dedicated `assumeRoleArn` property instead.
    * - `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead.
-   * - `TransitiveTagKeys` defaults to use all keys (if any) specified in `Tags`. E.g, all tags are transtive by default.
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
    * @default - No additional options.
@@ -98,7 +97,6 @@ export interface AwsCloudFormationStackProperties {
    *
    * - `RoleArn` should not be used. Use the dedicated `assumeRoleArn` property instead.
    * - `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead.
-   * - `TransitiveTagKeys` defaults to use all keys (if any) specified in `Tags`. E.g, all tags are transtive by default.
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
    * @default - No additional options.
