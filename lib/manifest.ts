@@ -258,6 +258,10 @@ export class Manifest {
     _options: jsonschema.Options,
     _ctx: jsonschema.SchemaContext
   ) {
+    if (_key !== 'assumeRoleAdditionalOptions') {
+      return;
+    }
+
     const assumeRoleOptions = instance.assumeRoleAdditionalOptions;
     if (assumeRoleOptions?.RoleArn) {
       throw new Error(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
