@@ -60,6 +60,9 @@ export enum ContextProvider {
   PLUGIN = 'plugin',
 }
 
+/**
+ * Options for context lookup roles.
+ */
 export interface ContextLookupRoleOptions {
   /**
    * Query account
