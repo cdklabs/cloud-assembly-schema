@@ -62,6 +62,16 @@ export enum ContextProvider {
 
 export interface ContextLookupRoleOptions {
   /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
    * The ARN of the role that should be used to look up the missing values
    *
    * @default - None
@@ -92,16 +102,6 @@ export interface ContextLookupRoleOptions {
  */
 export interface AmiContextQuery extends ContextLookupRoleOptions {
   /**
-   * Account to query
-   */
-  readonly account: string;
-
-  /**
-   * Region to query
-   */
-  readonly region: string;
-
-  /**
    * Owners to DescribeImages call
    *
    * @default - All owners
@@ -117,32 +117,12 @@ export interface AmiContextQuery extends ContextLookupRoleOptions {
 /**
  * Query to availability zone context provider
  */
-export interface AvailabilityZonesContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-}
+export interface AvailabilityZonesContextQuery extends ContextLookupRoleOptions {}
 
 /**
  * Query to hosted zone context provider
  */
 export interface HostedZoneContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
   /**
    * The domain name e.g. example.com to lookup
    */
@@ -171,16 +151,6 @@ export interface HostedZoneContextQuery extends ContextLookupRoleOptions {
  */
 export interface SSMParameterContextQuery extends ContextLookupRoleOptions {
   /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
-  /**
    * Parameter name to query
    */
   readonly parameterName: string;
@@ -190,16 +160,6 @@ export interface SSMParameterContextQuery extends ContextLookupRoleOptions {
  * Query input for looking up a VPC
  */
 export interface VpcContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
   /**
    * Filters to apply to the VPC
    *
@@ -242,16 +202,6 @@ export interface VpcContextQuery extends ContextLookupRoleOptions {
  * Query to endpoint service context provider
  */
 export interface EndpointServiceAvailabilityZonesContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
   /**
    * Query service name
    */
@@ -298,17 +248,7 @@ export interface LoadBalancerFilter extends ContextLookupRoleOptions {
 /**
  * Query input for looking up a load balancer
  */
-export interface LoadBalancerContextQuery extends LoadBalancerFilter {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-}
+export interface LoadBalancerContextQuery extends LoadBalancerFilter {}
 
 /**
  * The protocol for connections from clients to the load balancer
@@ -350,16 +290,6 @@ export enum LoadBalancerListenerProtocol {
  */
 export interface LoadBalancerListenerContextQuery extends LoadBalancerFilter {
   /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
-  /**
    * Find by listener's arn
    * @default - does not find by listener arn
    */
@@ -382,16 +312,6 @@ export interface LoadBalancerListenerContextQuery extends LoadBalancerFilter {
  * Query input for looking up a security group
  */
 export interface SecurityGroupContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
   /**
    * Security group id
    *
@@ -418,16 +338,6 @@ export interface SecurityGroupContextQuery extends ContextLookupRoleOptions {
  * Query input for looking up a KMS Key
  */
 export interface KeyContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Query account
-   */
-  readonly account: string;
-
-  /**
-   * Query region
-   */
-  readonly region: string;
-
   /**
    * Alias name used to search the Key
    */
