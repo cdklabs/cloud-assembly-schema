@@ -82,7 +82,7 @@ export interface ContextLookupRoleOptions {
   readonly lookupRoleArn?: string;
 
   /**
-   * The ExternalId that needs to be supplied while assuming lookup role
+   * The ExternalId that needs to be supplied while assuming this role
    *
    * @default - No ExternalId will be supplied
    */
@@ -97,7 +97,7 @@ export interface ContextLookupRoleOptions {
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
    * @default - No additional options.
    */
-  readonly lookupRoleAdditionalOptions?: { [key: string]: any };
+  readonly assumeRoleAdditionalOptions?: { [key: string]: any };
 }
 
 /**

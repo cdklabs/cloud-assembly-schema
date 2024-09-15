@@ -588,10 +588,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -620,10 +620,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -664,10 +664,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -700,10 +700,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -752,10 +752,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -788,10 +788,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -835,10 +835,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -910,10 +910,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -954,10 +954,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}
@@ -989,10 +989,10 @@
                     "type": "string"
                 },
                 "lookupRoleExternalId": {
-                    "description": "The ExternalId that needs to be supplied while assuming lookup role (Default - No ExternalId will be supplied)",
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
                 },
-                "lookupRoleAdditionalOptions": {
+                "assumeRoleAdditionalOptions": {
                     "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
                     "type": "object",
                     "additionalProperties": {}

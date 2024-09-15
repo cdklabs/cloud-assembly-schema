@@ -249,25 +249,29 @@ export class Manifest {
 
   /**
    * Validates that `assumeRoleAdditionalOptions` doesn't contain nor `ExternalId` neither `RoleArn`, as they
-   * have dedicated properties preceding this (e.g `assumeRoleArn` and `assumeRoleExternalId`).
+   * should have dedicated properties preceding this (e.g `assumeRoleArn` and `assumeRoleExternalId`).
    */
   private static validateAssumeRoleAdditionalOptions(
     instance: any,
-    _key: string,
+    key: string,
     _schema: jsonschema.Schema,
     _options: jsonschema.Options,
     _ctx: jsonschema.SchemaContext
   ) {
-    if (_key !== 'assumeRoleAdditionalOptions') {
+    if (key !== 'assumeRoleAdditionalOptions') {
+      // note that this means that if we happen to have a property named like this, but that
+      // does want to allow 'RoleArn' or 'ExternalId', this code will have to change to consider the full schema path.
+      // I decided to make this less granular for now on purpose because it fits our needs and avoids having messy
+      // validation logic due to various schema paths.
       return;
     }
 
-    const assumeRoleOptions = instance.assumeRoleAdditionalOptions;
+    const assumeRoleOptions = instance[key];
     if (assumeRoleOptions?.RoleArn) {
-      throw new Error(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
+      throw new Error(`RoleArn is not allowed inside '${key}'`);
     }
     if (assumeRoleOptions?.ExternalId) {
-      throw new Error(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
+      throw new Error(`ExternalId is not allowed inside '${key}'`);
     }
   }
 

@@ -2,7 +2,13 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { ArtifactType, AssemblyManifest, Manifest, StackTagsMetadataEntry } from '../lib';
+import {
+  ArtifactType,
+  AssemblyManifest,
+  ContextProvider,
+  Manifest,
+  StackTagsMetadataEntry,
+} from '../lib';
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -31,7 +37,7 @@ test('manifest save', () => {
   });
 });
 
-test('assumeRoleAdditionalOptions.RoleArn is validated', () => {
+test('assumeRoleAdditionalOptions.RoleArn is validated in stack artifact', () => {
   expect(() => {
     Manifest.saveAssemblyManifest(
       {
@@ -55,7 +61,7 @@ test('assumeRoleAdditionalOptions.RoleArn is validated', () => {
   }).toThrow(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
 });
 
-test('assumeRoleAdditionalOptions.ExternalId is validated', () => {
+test('assumeRoleAdditionalOptions.ExternalId is validated in stack artifact', () => {
   expect(() => {
     Manifest.saveAssemblyManifest(
       {
@@ -73,6 +79,54 @@ test('assumeRoleAdditionalOptions.ExternalId is validated', () => {
             },
           },
         },
+      },
+      'somewhere'
+    );
+  }).toThrow(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
+test('assumeRoleAdditionalOptions.RoleArn is validated in missing context', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        missing: [
+          {
+            key: 'key',
+            provider: ContextProvider.AMI_PROVIDER,
+            props: {
+              account: '123456789012',
+              region: 'us-east-1',
+              assumeRoleAdditionalOptions: {
+                RoleArn: 'role',
+              },
+            },
+          },
+        ],
+      },
+      'somewhere'
+    );
+  }).toThrow(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
+test('assumeRoleAdditionalOptions.ExternalId is validated in missing context', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        missing: [
+          {
+            key: 'key',
+            provider: ContextProvider.AMI_PROVIDER,
+            props: {
+              account: '123456789012',
+              region: 'us-east-1',
+              assumeRoleAdditionalOptions: {
+                ExternalId: 'external-id',
+              },
+            },
+          },
+        ],
       },
       'somewhere'
     );
