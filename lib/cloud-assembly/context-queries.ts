@@ -61,9 +61,65 @@ export enum ContextProvider {
 }
 
 /**
- * Options for context lookup roles.
+ * Query to AMI context provider
  */
-export interface ContextLookupRoleOptions {
+export interface AmiContextQuery {
+  /**
+   * Account to query
+   */
+  readonly account: string;
+
+  /**
+   * Region to query
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
+  /**
+   * Owners to DescribeImages call
+   *
+   * @default - All owners
+   */
+  readonly owners?: string[];
+
+  /**
+   * Filters to DescribeImages call
+   */
+  readonly filters: { [key: string]: string[] };
+}
+
+/**
+ * Query to availability zone context provider
+ */
+export interface AvailabilityZonesContextQuery {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+}
+
+/**
+ * Query to hosted zone context provider
+ */
+export interface HostedZoneContextQuery {
   /**
    * Query account
    */
@@ -81,51 +137,6 @@ export interface ContextLookupRoleOptions {
    */
   readonly lookupRoleArn?: string;
 
-  /**
-   * The ExternalId that needs to be supplied while assuming this role
-   *
-   * @default - No ExternalId will be supplied
-   */
-  readonly lookupRoleExternalId?: string;
-
-  /**
-   * Additional options to pass to STS when assuming the lookup role.
-   *
-   * - `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.
-   * - `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead.
-   *
-   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
-   * @default - No additional options.
-   */
-  readonly assumeRoleAdditionalOptions?: { [key: string]: any };
-}
-
-/**
- * Query to AMI context provider
- */
-export interface AmiContextQuery extends ContextLookupRoleOptions {
-  /**
-   * Owners to DescribeImages call
-   *
-   * @default - All owners
-   */
-  readonly owners?: string[];
-
-  /**
-   * Filters to DescribeImages call
-   */
-  readonly filters: { [key: string]: string[] };
-}
-
-/**
- * Query to availability zone context provider
- */
-export interface AvailabilityZonesContextQuery extends ContextLookupRoleOptions {}
-
-/**
- * Query to hosted zone context provider
- */
-export interface HostedZoneContextQuery extends ContextLookupRoleOptions {
   /**
    * The domain name e.g. example.com to lookup
    */
@@ -152,7 +163,24 @@ export interface HostedZoneContextQuery extends ContextLookupRoleOptions {
 /**
  * Query to SSM Parameter Context Provider
  */
-export interface SSMParameterContextQuery extends ContextLookupRoleOptions {
+export interface SSMParameterContextQuery {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
   /**
    * Parameter name to query
    */
@@ -162,7 +190,24 @@ export interface SSMParameterContextQuery extends ContextLookupRoleOptions {
 /**
  * Query input for looking up a VPC
  */
-export interface VpcContextQuery extends ContextLookupRoleOptions {
+export interface VpcContextQuery {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
   /**
    * Filters to apply to the VPC
    *
@@ -204,7 +249,24 @@ export interface VpcContextQuery extends ContextLookupRoleOptions {
 /**
  * Query to endpoint service context provider
  */
-export interface EndpointServiceAvailabilityZonesContextQuery extends ContextLookupRoleOptions {
+export interface EndpointServiceAvailabilityZonesContextQuery {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
   /**
    * Query service name
    */
@@ -229,7 +291,7 @@ export enum LoadBalancerType {
 /**
  * Filters for selecting load balancers
  */
-export interface LoadBalancerFilter extends ContextLookupRoleOptions {
+export interface LoadBalancerFilter {
   /**
    * Filter load balancers by their type
    */
@@ -251,7 +313,24 @@ export interface LoadBalancerFilter extends ContextLookupRoleOptions {
 /**
  * Query input for looking up a load balancer
  */
-export interface LoadBalancerContextQuery extends LoadBalancerFilter {}
+export interface LoadBalancerContextQuery extends LoadBalancerFilter {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+}
 
 /**
  * The protocol for connections from clients to the load balancer
@@ -293,6 +372,23 @@ export enum LoadBalancerListenerProtocol {
  */
 export interface LoadBalancerListenerContextQuery extends LoadBalancerFilter {
   /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
+  /**
    * Find by listener's arn
    * @default - does not find by listener arn
    */
@@ -314,7 +410,24 @@ export interface LoadBalancerListenerContextQuery extends LoadBalancerFilter {
 /**
  * Query input for looking up a security group
  */
-export interface SecurityGroupContextQuery extends ContextLookupRoleOptions {
+export interface SecurityGroupContextQuery {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
   /**
    * Security group id
    *
@@ -340,7 +453,24 @@ export interface SecurityGroupContextQuery extends ContextLookupRoleOptions {
 /**
  * Query input for looking up a KMS Key
  */
-export interface KeyContextQuery extends ContextLookupRoleOptions {
+export interface KeyContextQuery {
+  /**
+   * Query account
+   */
+  readonly account: string;
+
+  /**
+   * Query region
+   */
+  readonly region: string;
+
+  /**
+   * The ARN of the role that should be used to look up the missing values
+   *
+   * @default - None
+   */
+  readonly lookupRoleArn?: string;
+
   /**
    * Alias name used to search the Key
    */
