@@ -29,9 +29,17 @@ export class Version {
   public readonly changed: boolean;
 
   constructor() {
-    const tags = exec(['git', 'ls-remote', '--tags', 'origin']);
-    this.current = tags.split('/v').pop()!;
-    this.changed = schemasChanged();
+    // ensure all tags are available locally
+    exec(['git', 'fetch', '--tags']);
+    const tags = exec(['git', 'tag', '--sort=-creatordate']);
+
+    const vPrefixed = tags.split('\n')[0];
+    if (!vPrefixed.startsWith('v')) {
+      throw new Error(`Unexpected tag name: ${vPrefixed}`);
+    }
+
+    this.current = vPrefixed.substring(1);
+    this.changed = schemasChanged(vPrefixed);
     this.next = this.changed ? semver.inc(this.current, 'major')! : this.current;
   }
 
