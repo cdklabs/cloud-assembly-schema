@@ -2,7 +2,13 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { AssemblyManifest, Manifest, StackTagsMetadataEntry } from '../lib';
+import {
+  ArtifactType,
+  AssemblyManifest,
+  ContextProvider,
+  Manifest,
+  StackTagsMetadataEntry,
+} from '../lib';
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 
@@ -29,6 +35,102 @@ test('manifest save', () => {
     ...assemblyManifest,
     version: Manifest.version(), // version is forced
   });
+});
+
+test('assumeRoleAdditionalOptions.RoleArn is validated in stack artifact', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        artifacts: {
+          'aws-cdk-sqs': {
+            type: ArtifactType.AWS_CLOUDFORMATION_STACK,
+            properties: {
+              directoryName: 'dir',
+              file: 'file',
+              templateFile: 'template',
+              assumeRoleAdditionalOptions: {
+                RoleArn: 'foo',
+              },
+            },
+          },
+        },
+      },
+      'somewhere'
+    );
+  }).toThrow(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
+test('assumeRoleAdditionalOptions.ExternalId is validated in stack artifact', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        artifacts: {
+          'aws-cdk-sqs': {
+            type: ArtifactType.AWS_CLOUDFORMATION_STACK,
+            properties: {
+              directoryName: 'dir',
+              file: 'file',
+              templateFile: 'template',
+              assumeRoleAdditionalOptions: {
+                ExternalId: 'external-id',
+              },
+            },
+          },
+        },
+      },
+      'somewhere'
+    );
+  }).toThrow(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
+test('assumeRoleAdditionalOptions.RoleArn is validated in missing context', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        missing: [
+          {
+            key: 'key',
+            provider: ContextProvider.AMI_PROVIDER,
+            props: {
+              account: '123456789012',
+              region: 'us-east-1',
+              assumeRoleAdditionalOptions: {
+                RoleArn: 'role',
+              },
+            },
+          },
+        ],
+      },
+      'somewhere'
+    );
+  }).toThrow(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
+test('assumeRoleAdditionalOptions.ExternalId is validated in missing context', () => {
+  expect(() => {
+    Manifest.saveAssemblyManifest(
+      {
+        version: 'version',
+        missing: [
+          {
+            key: 'key',
+            provider: ContextProvider.AMI_PROVIDER,
+            props: {
+              account: '123456789012',
+              region: 'us-east-1',
+              assumeRoleAdditionalOptions: {
+                ExternalId: 'external-id',
+              },
+            },
+          },
+        ],
+      },
+      'somewhere'
+    );
+  }).toThrow(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
 });
 
 test('manifest load', () => {

@@ -17,6 +17,17 @@ export interface BootstrapRole {
   readonly assumeRoleExternalId?: string;
 
   /**
+   * Additional options to pass to STS when assuming the role.
+   *
+   * - `RoleArn` should not be used. Use the dedicated `arn` property instead.
+   * - `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
+   * @default - No additional options.
+   */
+  readonly assumeRoleAdditionalOptions?: { [key: string]: any };
+
+  /**
    * Version of bootstrap stack required to use this role
    *
    * @default - No bootstrap stack required
@@ -80,6 +91,17 @@ export interface AwsCloudFormationStackProperties {
    * @default - No external ID
    */
   readonly assumeRoleExternalId?: string;
+
+  /**
+   * Additional options to pass to STS when assuming the role.
+   *
+   * - `RoleArn` should not be used. Use the dedicated `assumeRoleArn` property instead.
+   * - `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/STS.html#assumeRole-property
+   * @default - No additional options.
+   */
+  readonly assumeRoleAdditionalOptions?: { [key: string]: any };
 
   /**
    * The role that is passed to CloudFormation to execute the change set
