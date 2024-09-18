@@ -235,24 +235,9 @@
       "steps": [
         {
           "exec": "ts-node --prefer-ts-exts -e \"require('./projenrc/update.ts').update()\""
-        }
-      ]
-    },
-    "pre-release": {
-      "name": "pre-release",
-      "env": {
-        "RELEASE": "true"
-      },
-      "steps": [
-        {
-          "exec": "ts-node --prefer-ts-exts -e \"require('./projenrc/update.ts').update()\""
         },
         {
-          "condition": "node -e \"if (process.env.CI) process.exit(1)\"",
-          "say": "✨ No changes created as a result of running pre-release or release should be committed. They will likely be reverted upon submission of the PR."
-        },
-        {
-          "exec": "yarn default"
+          "exec": "npx projen"
         }
       ]
     },
@@ -260,7 +245,8 @@
       "name": "release",
       "description": "Prepare a release from \"main\" branch",
       "env": {
-        "RELEASE": "true"
+        "RELEASE": "true",
+        "MIN_MAJOR": "36"
       },
       "steps": [
         {
@@ -276,13 +262,7 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git restore package.json"
-        },
-        {
-          "exec": "git restore .projen/tasks.json"
-        },
-        {
-          "exec": "git diff --ignore-space-at-eol"
+          "exec": "git diff --ignore-space-at-eol --exit-code"
         }
       ]
     },
