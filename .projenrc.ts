@@ -1,14 +1,14 @@
-// import * as fs from 'fs';
-import { JsonPatch, cdk } from 'projen';
+import { CdklabsJsiiProject } from 'cdklabs-projen-project-types';
+import { JsonPatch } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
 import { MajorVersion } from './projenrc/version-bump';
 
-export const project = new cdk.JsiiProject({
+export const project = new CdklabsJsiiProject({
   author: 'Amazon Web Services',
-  authorAddress: '',
+  enablePRAutoMerge: true,
+  authorAddress: 'https://aws.amazon.com',
   authorOrganization: true,
-  authorUrl: 'https://aws.amazon.com',
   defaultReleaseBranch: 'main',
   autoApproveUpgrades: true,
   autoApproveOptions: {
@@ -67,7 +67,7 @@ export const project = new cdk.JsiiProject({
   srcdir: 'lib',
   bundledDeps: ['jsonschema', 'semver'],
   description: 'Cloud Assembly Schema',
-  devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema'],
+  devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema', 'cdklabs-projen-project-types'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
   minMajorVersion: new MajorVersion().next,
 });
