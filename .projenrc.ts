@@ -1,7 +1,8 @@
+// import * as fs from 'fs';
 import { JsonPatch, cdk } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
-import { Version } from './projenrc';
+import { MajorVersion } from './projenrc/version-bump';
 
 export const project = new cdk.JsiiProject({
   author: 'Amazon Web Services',
@@ -18,12 +19,6 @@ export const project = new cdk.JsiiProject({
   projenrcTs: true,
   docgen: false,
   stability: Stability.STABLE,
-  releaseWorkflowSetupSteps: [
-    {
-      name: 'Pre-Release Setup',
-      run: 'npx projen pre-release',
-    },
-  ],
   jsiiVersion: '*',
   keywords: ['aws', 'cdk'],
   repositoryUrl: 'https://github.com/cdklabs/cloud-assembly-schema.git',
@@ -74,34 +69,16 @@ export const project = new cdk.JsiiProject({
   description: 'Cloud Assembly Schema',
   devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
-  minMajorVersion: Version.bump(),
+  minMajorVersion: new MajorVersion().next,
 });
 
 const updateSchema = 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"';
 
 project.preCompileTask.exec(updateSchema);
-project.addTask('pre-release', {
-  env: { RELEASE: 'true' },
-  steps: [
-    {
-      exec: updateSchema,
-    },
-    {
-      condition: `node -e "if (process.env.CI) process.exit(1)"`,
-      say: '✨ No changes created as a result of running pre-release or release should be committed. They will likely be reverted upon submission of the PR.',
-    },
-    {
-      exec: 'yarn default',
-    },
-  ],
-});
 
-project.tasks.tryFind('release')?.updateStep(4, {
-  exec: 'git restore package.json',
-});
-
-project.tasks.tryFind('release')?.exec('git restore .projen/tasks.json');
-project.tasks.tryFind('release')?.exec('git diff --ignore-space-at-eol');
+// rerun projen because the update schema task may have caused
+// the major version to change
+project.preCompileTask.exec('npx projen');
 
 const packageJson = project.tryFindObjectFile('package.json');
 packageJson?.patch(
