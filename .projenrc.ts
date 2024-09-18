@@ -23,7 +23,12 @@ export const project = new cdk.JsiiProject({
   keywords: ['aws', 'cdk'],
   repositoryUrl: 'https://github.com/cdklabs/cloud-assembly-schema.git',
   homepage: 'https://github.com/cdklabs/cloud-assembly-schema',
-  minNodeVersion: '18.18.0',
+  // Don't set minNodeVersion -- this is just a library with some data and a
+  // couple of simple JS files. It doesn't care about the Node version of the
+  // consuming party at all. It's unlikely you will try to install this on a
+  // Node version it doesn't work on.
+  // minNodeVersion: '18.18.0',
+  workflowNodeVersion: 'lts/*',
   excludeTypescript: ['**/test/**/*.ts'],
   publishToMaven: {
     javaPackage: 'software.amazon.awscdk.cloudassembly.schema',
