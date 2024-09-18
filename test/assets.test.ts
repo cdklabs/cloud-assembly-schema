@@ -181,6 +181,56 @@ describe('File asset', () => {
   });
 });
 
+test('assumeRoleAdditionalOptions.RoleArn is validated', () => {
+  expect(() => {
+    validate({
+      version: Manifest.version(),
+      files: {
+        asset: {
+          source: {
+            path: 'a/b/c',
+          },
+          destinations: {
+            dest: {
+              region: 'us-north-20',
+              bucketName: 'Bouquet',
+              objectKey: 'key',
+              assumeRoleAdditionalOptions: {
+                RoleArn: 'foo',
+              },
+            },
+          },
+        },
+      },
+    });
+  }).toThrow(`RoleArn is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
+test('assumeRoleAdditionalOptions.ExternalId is validated', () => {
+  expect(() => {
+    validate({
+      version: Manifest.version(),
+      files: {
+        asset: {
+          source: {
+            path: 'a/b/c',
+          },
+          destinations: {
+            dest: {
+              region: 'us-north-20',
+              bucketName: 'Bouquet',
+              objectKey: 'key',
+              assumeRoleAdditionalOptions: {
+                ExternalId: 'foo',
+              },
+            },
+          },
+        },
+      },
+    });
+  }).toThrow(`ExternalId is not allowed inside 'assumeRoleAdditionalOptions'`);
+});
+
 function validate(manifest: any) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'assets.test.'));
   const filePath = path.join(dir, 'manifest.json');

@@ -147,11 +147,7 @@ export class Manifest {
     return this.loadAssemblyManifest(filePath);
   }
 
-  private static validate(
-    manifest: { version: string },
-    schema: jsonschema.Schema,
-    options?: LoadManifestOptions
-  ) {
+  private static validate(manifest: any, schema: jsonschema.Schema, options?: LoadManifestOptions) {
     function parseVersion(version: string) {
       const ver = semver.valid(version);
       if (!ver) {
@@ -179,7 +175,8 @@ export class Manifest {
       nestedErrors: true,
 
       allowUnknownAttributes: false,
-    } as any);
+      preValidateProperty: Manifest.validateAssumeRoleAdditionalOptions,
+    });
 
     let errors = result.errors;
     if (options?.skipEnumCheck) {
@@ -248,6 +245,34 @@ export class Manifest {
         value: diskTag.Value,
       }))
     );
+  }
+
+  /**
+   * Validates that `assumeRoleAdditionalOptions` doesn't contain nor `ExternalId` neither `RoleArn`, as they
+   * should have dedicated properties preceding this (e.g `assumeRoleArn` and `assumeRoleExternalId`).
+   */
+  private static validateAssumeRoleAdditionalOptions(
+    instance: any,
+    key: string,
+    _schema: jsonschema.Schema,
+    _options: jsonschema.Options,
+    _ctx: jsonschema.SchemaContext
+  ) {
+    if (key !== 'assumeRoleAdditionalOptions') {
+      // note that this means that if we happen to have a property named like this, but that
+      // does want to allow 'RoleArn' or 'ExternalId', this code will have to change to consider the full schema path.
+      // I decided to make this less granular for now on purpose because it fits our needs and avoids having messy
+      // validation logic due to various schema paths.
+      return;
+    }
+
+    const assumeRoleOptions = instance[key];
+    if (assumeRoleOptions?.RoleArn) {
+      throw new Error(`RoleArn is not allowed inside '${key}'`);
+    }
+    if (assumeRoleOptions?.ExternalId) {
+      throw new Error(`ExternalId is not allowed inside '${key}'`);
+    }
   }
 
   /**

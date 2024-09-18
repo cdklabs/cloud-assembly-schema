@@ -369,6 +369,11 @@
                     "description": "External ID to use when assuming role for cloudformation deployments (Default - No external ID)",
                     "type": "string"
                 },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the role.\n\n- `RoleArn` should not be used. Use the dedicated `assumeRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
+                },
                 "cloudFormationExecutionRoleArn": {
                     "description": "The role that is passed to CloudFormation to execute the change set (Default - No role is passed (currently assumed role/credentials are used))",
                     "type": "string"
@@ -409,6 +414,11 @@
                 "assumeRoleExternalId": {
                     "description": "External ID to use when assuming the bootstrap role (Default - No external ID)",
                     "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the role.\n\n- `RoleArn` should not be used. Use the dedicated `arn` property instead.\n- `ExternalId` should not be used. Use the dedicated `assumeRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 },
                 "requiresBootstrapStackVersion": {
                     "description": "Version of bootstrap stack required to use this role (Default - No bootstrap stack required)",
@@ -555,18 +565,6 @@
             "description": "Query to AMI context provider",
             "type": "object",
             "properties": {
-                "account": {
-                    "description": "Account to query",
-                    "type": "string"
-                },
-                "region": {
-                    "description": "Region to query",
-                    "type": "string"
-                },
-                "lookupRoleArn": {
-                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
-                    "type": "string"
-                },
                 "owners": {
                     "description": "Owners to DescribeImages call (Default - All owners)",
                     "type": "array",
@@ -583,6 +581,27 @@
                             "type": "string"
                         }
                     }
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -606,6 +625,15 @@
                 "lookupRoleArn": {
                     "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
                     "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -617,18 +645,6 @@
             "description": "Query to hosted zone context provider",
             "type": "object",
             "properties": {
-                "account": {
-                    "description": "Query account",
-                    "type": "string"
-                },
-                "region": {
-                    "description": "Query region",
-                    "type": "string"
-                },
-                "lookupRoleArn": {
-                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
-                    "type": "string"
-                },
                 "domainName": {
                     "description": "The domain name e.g. example.com to lookup",
                     "type": "string"
@@ -641,6 +657,27 @@
                 "vpcId": {
                     "description": "The VPC ID to that the private zone must be associated with\n\nIf you provide VPC ID and privateZone is false, this will return no results\nand raise an error. (Default - Required if privateZone=true)",
                     "type": "string"
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -653,6 +690,10 @@
             "description": "Query to SSM Parameter Context Provider",
             "type": "object",
             "properties": {
+                "parameterName": {
+                    "description": "Parameter name to query",
+                    "type": "string"
+                },
                 "account": {
                     "description": "Query account",
                     "type": "string"
@@ -665,9 +706,14 @@
                     "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
                     "type": "string"
                 },
-                "parameterName": {
-                    "description": "Parameter name to query",
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -680,18 +726,6 @@
             "description": "Query input for looking up a VPC",
             "type": "object",
             "properties": {
-                "account": {
-                    "description": "Query account",
-                    "type": "string"
-                },
-                "region": {
-                    "description": "Query region",
-                    "type": "string"
-                },
-                "lookupRoleArn": {
-                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
-                    "type": "string"
-                },
                 "filter": {
                     "description": "Filters to apply to the VPC\n\nFilter parameters are the same as passed to DescribeVpcs.",
                     "type": "object",
@@ -711,6 +745,27 @@
                 "returnVpnGateways": {
                     "description": "Whether to populate the `vpnGatewayId` field of the `VpcContextResponse`,\nwhich contains the VPN Gateway ID, if one exists. You can explicitly\ndisable this in order to avoid the lookup if you know the VPC does not have\na VPN Gatway attached. (Default true)",
                     "type": "boolean"
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -723,6 +778,10 @@
             "description": "Query to endpoint service context provider",
             "type": "object",
             "properties": {
+                "serviceName": {
+                    "description": "Query service name",
+                    "type": "string"
+                },
                 "account": {
                     "description": "Query account",
                     "type": "string"
@@ -735,9 +794,14 @@
                     "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
                     "type": "string"
                 },
-                "serviceName": {
-                    "description": "Query service name",
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
                     "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -750,18 +814,6 @@
             "description": "Query input for looking up a load balancer",
             "type": "object",
             "properties": {
-                "account": {
-                    "description": "Query account",
-                    "type": "string"
-                },
-                "region": {
-                    "description": "Query region",
-                    "type": "string"
-                },
-                "lookupRoleArn": {
-                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
-                    "type": "string"
-                },
                 "loadBalancerType": {
                     "$ref": "#/definitions/LoadBalancerType",
                     "description": "Filter load balancers by their type"
@@ -776,6 +828,27 @@
                     "items": {
                         "$ref": "#/definitions/Tag"
                     }
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -796,18 +869,6 @@
             "description": "Query input for looking up a load balancer listener",
             "type": "object",
             "properties": {
-                "account": {
-                    "description": "Query account",
-                    "type": "string"
-                },
-                "region": {
-                    "description": "Query region",
-                    "type": "string"
-                },
-                "lookupRoleArn": {
-                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
-                    "type": "string"
-                },
                 "listenerArn": {
                     "description": "Find by listener's arn (Default - does not find by listener arn)",
                     "type": "string"
@@ -842,6 +903,27 @@
                     "items": {
                         "$ref": "#/definitions/Tag"
                     }
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
@@ -854,18 +936,6 @@
             "description": "Query input for looking up a security group",
             "type": "object",
             "properties": {
-                "account": {
-                    "description": "Query account",
-                    "type": "string"
-                },
-                "region": {
-                    "description": "Query region",
-                    "type": "string"
-                },
-                "lookupRoleArn": {
-                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
-                    "type": "string"
-                },
                 "securityGroupId": {
                     "description": "Security group id (Default - None)",
                     "type": "string"
@@ -877,17 +947,7 @@
                 "vpcId": {
                     "description": "VPC ID (Default - None)",
                     "type": "string"
-                }
-            },
-            "required": [
-                "account",
-                "region"
-            ]
-        },
-        "KeyContextQuery": {
-            "description": "Query input for looking up a KMS Key",
-            "type": "object",
-            "properties": {
+                },
                 "account": {
                     "description": "Query account",
                     "type": "string"
@@ -900,9 +960,49 @@
                     "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
                     "type": "string"
                 },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            },
+            "required": [
+                "account",
+                "region"
+            ]
+        },
+        "KeyContextQuery": {
+            "description": "Query input for looking up a KMS Key",
+            "type": "object",
+            "properties": {
                 "aliasName": {
                     "description": "Alias name used to search the Key",
                     "type": "string"
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
                 }
             },
             "required": [
