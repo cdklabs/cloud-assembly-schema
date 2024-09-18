@@ -4,10 +4,8 @@ import * as tjs from 'typescript-json-schema';
 import { SCHEMA_DIR, getGeneratedSchemaPaths, getSchemaDefinition } from './schema-definition';
 import { exec, log } from './util';
 
-export function schemasChanged(): boolean {
-  const branch = exec(['git', 'rev-parse', '--abbrev-ref', 'HEAD']);
-  exec(['git', 'fetch', 'origin', '--prune']);
-  const changes = exec(['git', 'diff', '--name-only', branch, 'remotes/origin/main']).split('\n');
+export function schemasChanged(latestTag: string): boolean {
+  const changes = exec(['git', 'diff', '--name-only', latestTag]).split('\n');
   return changes.filter((change) => getGeneratedSchemaPaths().includes(change)).length > 0;
 }
 

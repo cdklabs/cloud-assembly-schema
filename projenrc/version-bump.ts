@@ -1,41 +1,28 @@
 import * as semver from 'semver';
 import { schemasChanged } from './update-schema';
-import { exec, log } from './util';
+import { exec } from './util';
 
-export class Version {
-  public static bump() {
-    try {
-      const versionInfo = new Version();
-      if (versionInfo.changed && process.env.RELEASE) {
-        log(`✨ Updating schema version: ${versionInfo.current} -> ${versionInfo.next}`);
-        return versionInfo.nextAsInt();
-      } else if (versionInfo.changed) {
-        log(
-          `✨ This change will update the schema version: ${versionInfo.current} -> ${versionInfo.next}`
-        );
-      }
-      return undefined;
-    } catch (e) {
-      /**
-       * If git cannot be reached, returning undefined is fine. This will never happen
-       * in the release workflow and may very well happen in any given build.
-       */
-      return undefined;
+export class MajorVersion {
+  public readonly current: number;
+  public readonly next: number;
+
+  public constructor() {
+    // ensure all tags are available locally
+    exec(['git', 'fetch', '--tags']);
+    const tags = exec(['git', 'tag', '--sort=-creatordate']);
+
+    const latestTag = tags.split('\n')[0];
+    if (!latestTag.startsWith('v')) {
+      throw new Error(`Unexpected tag name: ${latestTag}`);
     }
-  }
 
-  public readonly current: string;
-  public readonly next: string;
-  public readonly changed: boolean;
+    const fullVersion = semver.parse(latestTag.substring(1));
+    if (!fullVersion) {
+      throw new Error(`Unexpected tag name: ${latestTag}`);
+    }
 
-  constructor() {
-    const tags = exec(['git', 'ls-remote', '--tags', 'origin']);
-    this.current = tags.split('/v').pop()!;
-    this.changed = schemasChanged();
-    this.next = this.changed ? semver.inc(this.current, 'major')! : this.current;
-  }
-
-  public nextAsInt() {
-    return parseInt(this.next);
+    this.current = fullVersion.major;
+    const changed = schemasChanged(latestTag);
+    this.next = changed ? fullVersion.inc('major').major : this.current;
   }
 }
