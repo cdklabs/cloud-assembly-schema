@@ -19,12 +19,6 @@ export const project = new cdk.JsiiProject({
   projenrcTs: true,
   docgen: false,
   stability: Stability.STABLE,
-  releaseWorkflowSetupSteps: [
-    {
-      name: 'Pre-Release Setup',
-      run: 'npx projen pre-release',
-    },
-  ],
   jsiiVersion: '*',
   keywords: ['aws', 'cdk'],
   repositoryUrl: 'https://github.com/cdklabs/cloud-assembly-schema.git',
