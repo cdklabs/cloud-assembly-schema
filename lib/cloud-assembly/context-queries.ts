@@ -335,6 +335,34 @@ export interface SecurityGroupContextQuery extends ContextLookupRoleOptions {
    * @default - None
    */
   readonly vpcId?: string;
+
+  /**
+   * Security group description
+   *
+   * @default - None
+   */
+  readonly description?: string;
+
+  /**
+   * Account ID of the owner of the security group
+   *
+   * @default - None
+   */
+  readonly ownerId?: string;
+
+  /**
+   * The keys of tags assigned to the security group
+   *
+   * @default - None
+   */
+  readonly tagKeys?: string[];
+
+  /**
+   * The key/value combination of a tag assigned to the security group
+   *
+   * @default - None
+   */
+  readonly tags?: Record<string, string[]>;
 }
 
 /**
