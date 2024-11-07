@@ -19,10 +19,10 @@ import ASSEMBLY_SCHEMA = require('../schema/cloud-assembly.schema.json');
 
 import INTEG_SCHEMA = require('../schema/integ.schema.json');
 
-/**
- * Version is shared for both manifests
- */
-const SCHEMA_VERSION = require('../package.json').version;
+// Will be used later
+// const PACKAGE_VERSION = require('../package.json').version;
+
+import SCHEMA_VERSION = require('../schema/version.json');
 
 /**
  * Options for the loadManifest operation
@@ -125,10 +125,10 @@ export class Manifest {
   }
 
   /**
-   * Fetch the current schema version number.
+   * Fetch the version number of the assembly schema.
    */
   public static version(): string {
-    return SCHEMA_VERSION;
+    return `${SCHEMA_VERSION.revision}.0.0`;
   }
 
   /**

@@ -2,7 +2,6 @@
 import { JsonPatch, cdk } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
-import { MajorVersion } from './projenrc/version-bump';
 
 export const project = new cdk.JsiiProject({
   author: 'Amazon Web Services',
@@ -74,7 +73,6 @@ export const project = new cdk.JsiiProject({
   description: 'Cloud Assembly Schema',
   devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
-  minMajorVersion: new MajorVersion().next,
 });
 
 const updateSchema = 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"';
