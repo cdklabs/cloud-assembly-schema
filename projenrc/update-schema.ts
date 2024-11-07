@@ -14,7 +14,7 @@ export function schemasChanged(latestTag: string): boolean {
  * @returns JSON schema
  * @param schemaName the schema to generate
  */
-export function generateSchema(schemaName: string) {
+export function generateSchema(schemaName: string): any {
   const spec = getSchemaDefinition(schemaName);
   const out = path.join(SCHEMA_DIR, `${schemaName}.schema.json`);
 
@@ -37,7 +37,8 @@ export function generateSchema(schemaName: string) {
   addAnyMetadataEntry(schema);
 
   log(`Generating schema to ${out}`);
-  fs.writeFileSync(out, JSON.stringify(schema, null, 4));
+  const serializedSchema = JSON.stringify(schema, null, 4);
+  fs.writeFileSync(out, serializedSchema);
 
   return schema;
 }
