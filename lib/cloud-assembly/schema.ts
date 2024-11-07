@@ -117,6 +117,18 @@ export interface AssemblyManifest {
   readonly version: string;
 
   /**
+   * Required CLI version, if available
+   *
+   * If the manifest producer knows, it can put the minimum version of the CLI
+   * here that supports reading this assembly.
+   *
+   * If set, it can be used to show a more informative error message to users.
+   *
+   * @default - Minimum CLI version unknown
+   */
+  readonly minimumCliVersion?: string;
+
+  /**
    * The set of artifacts in this assembly.
    *
    * @default - no artifacts.
