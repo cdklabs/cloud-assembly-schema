@@ -9,6 +9,10 @@
                     "description": "Protocol version",
                     "type": "string"
                 },
+                "minimumCliVersion": {
+                    "description": "Required CLI version, if available\n\nIf the manifest producer knows, it can put the minimum version of the CLI\nhere that supports reading this assembly.\n\nIf set, it can be used to show a more informative error message to users. (Default - Minimum CLI version unknown)",
+                    "type": "string"
+                },
                 "artifacts": {
                     "description": "The set of artifacts in this assembly. (Default - no artifacts.)",
                     "type": "object",
