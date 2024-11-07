@@ -246,7 +246,7 @@
       "description": "Prepare a release from \"main\" branch",
       "env": {
         "RELEASE": "true",
-        "MIN_MAJOR": "40"
+        "MIN_MAJOR": "39"
       },
       "steps": [
         {
