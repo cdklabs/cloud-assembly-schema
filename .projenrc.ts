@@ -72,12 +72,12 @@ export const project = new cdk.JsiiProject({
   srcdir: 'lib',
   bundledDeps: ['jsonschema', 'semver'],
   description: 'Cloud Assembly Schema',
-  devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema'],
+  devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema', 'tsx'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
   minMajorVersion: new MajorVersion().next,
 });
 
-const updateSchema = 'ts-node --prefer-ts-exts -e "require(\'./projenrc/update.ts\').update()"';
+const updateSchema = 'tsx projenrc/update.ts';
 
 project.preCompileTask.exec(updateSchema);
 
