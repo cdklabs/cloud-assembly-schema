@@ -2,7 +2,6 @@
 import { JsonPatch, cdk } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
-import { MajorVersion } from './projenrc/version-bump';
 
 export const project = new cdk.JsiiProject({
   author: 'Amazon Web Services',
@@ -56,6 +55,7 @@ export const project = new cdk.JsiiProject({
       printWidth: 100,
     },
   },
+  nextVersionCommand: 'tsx ./projenrc/next-version.ts',
   eslintOptions: {
     prettier: true,
     dirs: ['lib'],
@@ -74,7 +74,6 @@ export const project = new cdk.JsiiProject({
   description: 'Cloud Assembly Schema',
   devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema', 'tsx'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
-  minMajorVersion: new MajorVersion().next,
 });
 
 const updateSchema = 'tsx projenrc/update.ts';

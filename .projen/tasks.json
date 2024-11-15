@@ -116,9 +116,6 @@
     "eslint": {
       "name": "eslint",
       "description": "Runs eslint against the codebase",
-      "env": {
-        "ESLINT_USE_FLAT_CONFIG": "false"
-      },
       "steps": [
         {
           "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ lib test projenrc .projenrc.ts",
@@ -248,8 +245,7 @@
       "name": "release",
       "description": "Prepare a release from \"main\" branch",
       "env": {
-        "RELEASE": "true",
-        "MIN_MAJOR": "39"
+        "RELEASE": "true"
       },
       "steps": [
         {
