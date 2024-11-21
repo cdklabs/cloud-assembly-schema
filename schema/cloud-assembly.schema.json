@@ -525,6 +525,7 @@
                 "load-balancer-listener",
                 "security-group",
                 "key-provider",
+                "rds-database-instance-provider",
                 "plugin"
             ]
         },
@@ -559,6 +560,9 @@
                 },
                 {
                     "$ref": "#/definitions/KeyContextQuery"
+                },
+                {
+                    "$ref": "#/definitions/DatabaseInstanceContextQuery"
                 },
                 {
                     "$ref": "#/definitions/PluginContextQuery"
@@ -1012,6 +1016,42 @@
             "required": [
                 "account",
                 "aliasName",
+                "region"
+            ]
+        },
+        "DatabaseInstanceContextQuery": {
+            "description": "Query input for looking up a RDS DatabaseInstance",
+            "type": "object",
+            "properties": {
+                "instanceIdentifier": {
+                    "description": "Instance identifier used to search the DatabaseInstance",
+                    "type": "string"
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            },
+            "required": [
+                "account",
+                "instanceIdentifier",
                 "region"
             ]
         },
