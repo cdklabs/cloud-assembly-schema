@@ -156,6 +156,12 @@ test('manifest load fails on higher major version', () => {
   );
 });
 
+test('load error includes CLI error if available', () => {
+  expect(() => Manifest.loadAssemblyManifest(fixture('high-version-with-cli'))).toThrow(
+    /minimumCliVersion/
+  );
+});
+
 // once we start introducing minor version bumps that are considered
 // non breaking, this test can be removed.
 test('manifest load succeeds on higher minor version', () => {
