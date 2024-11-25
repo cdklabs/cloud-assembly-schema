@@ -121,7 +121,17 @@ export class Manifest {
    * @param filePath - path to the manifest file.
    */
   public static loadIntegManifest(filePath: string): integ.IntegManifest {
-    return this.loadManifest(filePath, INTEG_SCHEMA);
+    const manifest = this.loadManifest(filePath, INTEG_SCHEMA);
+
+    // Adding typing to `validate()` led to `loadManifest()` to properly infer
+    // its return type, which indicated that the return type of this
+    // function may be a lie. I could change the schema to make `testCases`
+    // optional, but that will bump the major version of this package and I
+    // don't want to do that. So instead, just make sure `testCases` is always there.
+    return {
+      ...manifest,
+      testCases: (manifest as any).testCases ?? [],
+    };
   }
 
   /**
@@ -147,7 +157,11 @@ export class Manifest {
     return this.loadAssemblyManifest(filePath);
   }
 
-  private static validate(manifest: any, schema: jsonschema.Schema, options?: LoadManifestOptions) {
+  private static validate(
+    manifest: any,
+    schema: jsonschema.Schema,
+    options?: LoadManifestOptions
+  ): asserts manifest is assembly.AssemblyManifest {
     function parseVersion(version: string) {
       const ver = semver.valid(version);
       if (!ver) {
@@ -161,10 +175,17 @@ export class Manifest {
 
     // first validate the version should be accepted. all versions within the same minor version are fine
     if (maxSupported < semver.major(actual) && !options?.skipVersionCheck) {
+      // If we have a more specific error to throw than the generic one below, make sure to add that info.
+      const cliVersion = (manifest as assembly.AssemblyManifest).minimumCliVersion;
+      let cliWarning = '';
+      if (cliVersion) {
+        cliWarning = `. You need at least CLI version ${cliVersion} to read this manifest.`;
+      }
+
       // we use a well known error prefix so that the CLI can identify this specific error
       // and print some more context to the user.
       throw new Error(
-        `${VERSION_MISMATCH}: Maximum schema version supported is ${maxSupported}.x.x, but found ${actual}`
+        `${VERSION_MISMATCH}: Maximum schema version supported is ${maxSupported}.x.x, but found ${actual}${cliWarning}`
       );
     }
 
