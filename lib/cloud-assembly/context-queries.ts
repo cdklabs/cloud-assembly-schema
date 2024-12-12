@@ -55,6 +55,11 @@ export enum ContextProvider {
   KEY_PROVIDER = 'key-provider',
 
   /**
+   * RDS DatabaseInstance Provider
+   */
+  RDS_DATABASE_INSTANCE_PROVIDER = 'rds-database-instance-provider',
+
+  /**
    * A plugin provider (the actual plugin name will be in the properties)
    */
   PLUGIN = 'plugin',
@@ -348,6 +353,16 @@ export interface KeyContextQuery extends ContextLookupRoleOptions {
 }
 
 /**
+ * Query input for looking up a RDS DatabaseInstance
+ */
+export interface DatabaseInstanceContextQuery extends ContextLookupRoleOptions {
+  /**
+   * Instance identifier used to search the DatabaseInstance
+   */
+  readonly instanceIdentifier: string;
+}
+
+/**
  * Query input for plugins
  *
  * This alternate branch is necessary because it needs to be able to escape all type checking
@@ -380,4 +395,5 @@ export type ContextQueryProperties =
   | LoadBalancerListenerContextQuery
   | SecurityGroupContextQuery
   | KeyContextQuery
+  | DatabaseInstanceContextQuery
   | PluginContextQuery;
