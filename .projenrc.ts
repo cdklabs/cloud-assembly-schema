@@ -3,6 +3,8 @@ import { JsonPatch, cdk } from 'projen';
 import { Stability } from 'projen/lib/cdk';
 import { TrailingComma } from 'projen/lib/javascript';
 
+const SCHEMA_VERSION: typeof import('./schema/version.json') = require('./schema/version.json');
+
 export const project = new cdk.JsiiProject({
   author: 'Amazon Web Services',
   authorAddress: '',
@@ -55,7 +57,8 @@ export const project = new cdk.JsiiProject({
       printWidth: 100,
     },
   },
-  nextVersionCommand: 'tsx ./projenrc/next-version.ts',
+  // This forces every release to be the major version from the data file
+  minMajorVersion: SCHEMA_VERSION.revision,
   eslintOptions: {
     prettier: true,
     dirs: ['lib'],

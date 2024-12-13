@@ -22,7 +22,7 @@ import INTEG_SCHEMA = require('../schema/integ.schema.json');
 /**
  * Version is shared for both manifests
  */
-const SCHEMA_VERSION = require('../package.json').version;
+import SCHEMA_VERSION = require('../schema/version.json');
 
 /**
  * Options for the loadManifest operation
@@ -138,7 +138,7 @@ export class Manifest {
    * Fetch the current schema version number.
    */
   public static version(): string {
-    return SCHEMA_VERSION;
+    return `${SCHEMA_VERSION.revision}.0.0`;
   }
 
   /**
