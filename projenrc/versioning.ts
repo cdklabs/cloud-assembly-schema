@@ -12,6 +12,7 @@ export function maybeBumpVersion(schemas: Record<string, any>) {
 
   if (current.schemaHash !== schemaHash) {
     current = { schemaHash, revision: current.revision + 1 };
+    console.log(`Schemas changed, bumping version to ${current.revision}`);
   }
 
   fs.writeFileSync(versionFile, JSON.stringify(current, null, 2));
