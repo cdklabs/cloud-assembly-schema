@@ -57,7 +57,7 @@ export const project = new cdk.JsiiProject({
       printWidth: 100,
     },
   },
-  // This forces the next release to be the major version from the data file
+  // This forces every release to be the major version from the data file
   minMajorVersion: SCHEMA_VERSION.revision,
   eslintOptions: {
     prettier: true,
