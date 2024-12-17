@@ -233,6 +233,16 @@ export interface ContainerImageAssetMetadataEntry extends BaseAssetMetadataEntry
    * @default - cache is used
    */
   readonly cacheDisabled?: boolean;
+
+  /**
+   * Provenance options to pass to the `docker build` command.
+   *
+   * Requires building with docker buildkit.
+   *
+   * @default - false
+   * @see https://docs.docker.com/build/metadata/attestations/slsa-provenance/
+   */
+  readonly provenance?: boolean;
 }
 
 /**
