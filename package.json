@@ -66,7 +66,7 @@
     "typescript-json-schema": "^0.65.1"
   },
   "dependencies": {
-    "jsonschema": "^1.4.1",
+    "jsonschema": "^1.5.0",
     "semver": "^7.6.3"
   },
   "bundledDependencies": [
