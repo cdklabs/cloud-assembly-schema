@@ -261,13 +261,23 @@ export type LogicalIdMetadataEntry = string;
 export type StackTagsMetadataEntry = Tag[];
 
 /**
+ * Any other type of metadata entry
+ *
+ * This could probably be changed to `any`, but it's safer not
+ * to do so right now.
+ * See https://github.com/cdklabs/cloud-assembly-schema/pull/121.
+ */
+export type PrimitiveType = boolean | number | string;
+
+/**
  * Union type for all metadata entries that might exist in the manifest.
  */
 export type MetadataEntryData =
   | AssetMetadataEntry
   | LogMessageMetadataEntry
   | LogicalIdMetadataEntry
-  | StackTagsMetadataEntry;
+  | StackTagsMetadataEntry
+  | PrimitiveType;
 
 /**
  * Type of artifact metadata entry.
