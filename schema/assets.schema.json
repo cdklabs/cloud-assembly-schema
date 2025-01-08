@@ -200,6 +200,10 @@
                 "cacheDisabled": {
                     "description": "Disable the cache and pass `--no-cache` to the `docker build` command. (Default - cache is used)",
                     "type": "boolean"
+                },
+                "dockerBuildProvenance": {
+                    "description": "Provenance options to pass to the `docker build` command.\n\nRequires building with docker buildkit. (Default - false)",
+                    "type": "boolean"
                 }
             }
         },
