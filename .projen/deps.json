@@ -115,6 +115,7 @@
     },
     {
       "name": "jsonschema",
+      "version": "~1.4.1",
       "type": "bundled"
     },
     {
