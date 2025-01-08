@@ -73,7 +73,12 @@ export const project = new cdk.JsiiProject({
     jestVersion: '29',
   },
   srcdir: 'lib',
-  bundledDeps: ['jsonschema', 'semver'],
+  bundledDeps: [
+    // restricting to minor 4 because of https://github.com/tdegrunt/jsonschema/issues/405
+    // which breaks our canaries on node 16.
+    'jsonschema@~1.4.1',
+    'semver',
+  ],
   description: 'Cloud Assembly Schema',
   devDeps: ['@types/semver', 'mock-fs', 'typescript-json-schema', 'tsx'],
   gitignore: ['.DS_Store', '**/*.d.ts', '**/*.js'],
