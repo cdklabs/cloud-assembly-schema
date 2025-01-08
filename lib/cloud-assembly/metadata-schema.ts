@@ -260,6 +260,8 @@ export type LogicalIdMetadataEntry = string;
  */
 export type StackTagsMetadataEntry = Tag[];
 
+export type PrimitiveType = boolean | number | string;
+
 /**
  * Union type for all metadata entries that might exist in the manifest.
  */
@@ -267,7 +269,8 @@ export type MetadataEntryData =
   | AssetMetadataEntry
   | LogMessageMetadataEntry
   | LogicalIdMetadataEntry
-  | StackTagsMetadataEntry;
+  | StackTagsMetadataEntry
+  | PrimitiveType;
 
 /**
  * Type of artifact metadata entry.
