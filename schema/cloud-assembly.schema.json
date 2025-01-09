@@ -529,6 +529,7 @@
                 "load-balancer-listener",
                 "security-group",
                 "key-provider",
+                "local-gateway",
                 "plugin"
             ]
         },
@@ -563,6 +564,9 @@
                 },
                 {
                     "$ref": "#/definitions/KeyContextQuery"
+                },
+                {
+                    "$ref": "#/definitions/LocalGatewayContextQuery"
                 },
                 {
                     "$ref": "#/definitions/PluginContextQuery"
@@ -1016,6 +1020,45 @@
             "required": [
                 "account",
                 "aliasName",
+                "region"
+            ]
+        },
+        "LocalGatewayContextQuery": {
+            "description": "Query input for looking up a Local Gateway",
+            "type": "object",
+            "properties": {
+                "filter": {
+                    "description": "Filters to apply to the Local Gateway\n\nFilter parameters are the same as passed to DescribeLocalGateways.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            },
+            "required": [
+                "account",
+                "filter",
                 "region"
             ]
         },
