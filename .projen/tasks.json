@@ -316,7 +316,7 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev,peer,prod,optional --filter=@types/node,@types/semver,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii,jsii-diff,jsii-pacmak,jsii-rosetta,mock-fs,prettier,projen,ts-node,tsx,typescript,typescript-json-schema,jsonschema,semver"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev,peer,prod,optional --filter=@types/node,@types/semver,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii,jsii-diff,jsii-pacmak,jsii-rosetta,mock-fs,prettier,projen,ts-node,tsx,typescript,typescript-json-schema,semver"
         },
         {
           "exec": "yarn install --check-files"

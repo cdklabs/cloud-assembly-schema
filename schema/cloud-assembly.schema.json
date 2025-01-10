@@ -126,7 +126,11 @@
                             }
                         },
                         {
-                            "type": "string"
+                            "type": [
+                                "string",
+                                "number",
+                                "boolean"
+                            ]
                         },
                         {
                             "description": "Free form data."
