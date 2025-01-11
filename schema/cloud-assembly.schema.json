@@ -529,6 +529,7 @@
                 "load-balancer-listener",
                 "security-group",
                 "key-provider",
+                "cc-api-provider",
                 "plugin"
             ]
         },
@@ -563,6 +564,9 @@
                 },
                 {
                     "$ref": "#/definitions/KeyContextQuery"
+                },
+                {
+                    "$ref": "#/definitions/CcApiContextQuery"
                 },
                 {
                     "$ref": "#/definitions/PluginContextQuery"
@@ -1018,6 +1022,61 @@
                 "aliasName",
                 "region"
             ]
+        },
+        "CcApiContextQuery": {
+            "description": "Query input for lookup up Cloudformation resources using CC API",
+            "type": "object",
+            "properties": {
+                "typeName": {
+                    "description": "The Cloudformation resource type.\nSee https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/supported-resources.html",
+                    "type": "string"
+                },
+                "exactIdentifier": {
+                    "description": "exactIdentifier of the resource.\nSpecifying exactIdentifier will return at most one result.\nEither exactIdentifier or propertyMatch should be specified. (Default - None)",
+                    "type": "string"
+                },
+                "propertyMatch": {
+                    "description": "This indicates the property to search for.\nIf both exactIdentifier and propertyMatch are specified, then exactIdentifier is used.\nSpecifying propertyMatch will return 0 or more results.\nEither exactIdentifier or propertyMatch should be specified. (Default - None)",
+                    "$ref": "#/definitions/Record<string,unknown>"
+                },
+                "propertiesToReturn": {
+                    "description": "This is a set of properties returned from CC API that we want to return from ContextQuery.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            },
+            "required": [
+                "account",
+                "propertiesToReturn",
+                "region",
+                "typeName"
+            ]
+        },
+        "Record<string,unknown>": {
+            "type": "object"
         },
         "PluginContextQuery": {
             "description": "Query input for plugins\n\nThis alternate branch is necessary because it needs to be able to escape all type checking\nwe do on on the cloud assembly -- we cannot know the properties that will be used a priori.",

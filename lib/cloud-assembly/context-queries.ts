@@ -55,6 +55,11 @@ export enum ContextProvider {
   KEY_PROVIDER = 'key-provider',
 
   /**
+   * CCAPI Provider
+   */
+  CC_API_PROVIDER = 'cc-api-provider',
+
+  /**
    * A plugin provider (the actual plugin name will be in the properties)
    */
   PLUGIN = 'plugin',
@@ -348,6 +353,39 @@ export interface KeyContextQuery extends ContextLookupRoleOptions {
 }
 
 /**
+ * Query input for lookup up Cloudformation resources using CC API
+ */
+export interface CcApiContextQuery extends ContextLookupRoleOptions {
+  /**
+   * The Cloudformation resource type.
+   * See https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/supported-resources.html
+   */
+  readonly typeName: string;
+
+  /**
+   * exactIdentifier of the resource.
+   * Specifying exactIdentifier will return at most one result.
+   * Either exactIdentifier or propertyMatch should be specified.
+   * @default - None
+   */
+  readonly exactIdentifier?: string;
+
+  /**
+   * This indicates the property to search for.
+   * If both exactIdentifier and propertyMatch are specified, then exactIdentifier is used.
+   * Specifying propertyMatch will return 0 or more results.
+   * Either exactIdentifier or propertyMatch should be specified.
+   * @default - None
+   */
+  readonly propertyMatch?: Record<string, unknown>;
+
+  /**
+   * This is a set of properties returned from CC API that we want to return from ContextQuery.
+   */
+  readonly propertiesToReturn: string[];
+}
+
+/**
  * Query input for plugins
  *
  * This alternate branch is necessary because it needs to be able to escape all type checking
@@ -380,4 +418,5 @@ export type ContextQueryProperties =
   | LoadBalancerListenerContextQuery
   | SecurityGroupContextQuery
   | KeyContextQuery
+  | CcApiContextQuery
   | PluginContextQuery;
