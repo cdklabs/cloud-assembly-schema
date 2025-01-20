@@ -530,6 +530,7 @@
                 "security-group",
                 "key-provider",
                 "local-gateway",
+                "outpost",
                 "plugin"
             ]
         },
@@ -567,6 +568,9 @@
                 },
                 {
                     "$ref": "#/definitions/LocalGatewayContextQuery"
+                },
+                {
+                    "$ref": "#/definitions/OutpostContextQuery"
                 },
                 {
                     "$ref": "#/definitions/PluginContextQuery"
@@ -1059,6 +1063,42 @@
             "required": [
                 "account",
                 "filter",
+                "region"
+            ]
+        },
+        "OutpostContextQuery": {
+            "description": "Query input for looking up an Outpost",
+            "type": "object",
+            "properties": {
+                "outpostId": {
+                    "description": "The ID or ARN of the Outpost",
+                    "type": "string"
+                },
+                "account": {
+                    "description": "Query account",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "Query region",
+                    "type": "string"
+                },
+                "lookupRoleArn": {
+                    "description": "The ARN of the role that should be used to look up the missing values (Default - None)",
+                    "type": "string"
+                },
+                "lookupRoleExternalId": {
+                    "description": "The ExternalId that needs to be supplied while assuming this role (Default - No ExternalId will be supplied)",
+                    "type": "string"
+                },
+                "assumeRoleAdditionalOptions": {
+                    "description": "Additional options to pass to STS when assuming the lookup role.\n\n- `RoleArn` should not be used. Use the dedicated `lookupRoleArn` property instead.\n- `ExternalId` should not be used. Use the dedicated `lookupRoleExternalId` instead. (Default - No additional options.)",
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            },
+            "required": [
+                "account",
+                "outpostId",
                 "region"
             ]
         },

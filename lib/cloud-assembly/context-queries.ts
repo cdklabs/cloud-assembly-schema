@@ -60,6 +60,11 @@ export enum ContextProvider {
   LOCAL_GATEWAY_PROVIDER = 'local-gateway',
 
   /**
+   * Outpost Provider
+   */
+  OUTPOST_PROVIDER = 'outpost',
+
+  /**
    * A plugin provider (the actual plugin name will be in the properties)
    */
   PLUGIN = 'plugin',
@@ -361,9 +366,19 @@ export interface LocalGatewayContextQuery extends ContextLookupRoleOptions {
    *
    * Filter parameters are the same as passed to DescribeLocalGateways.
    *
-   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/ec2/command/DescribeLocalGatewaysCommand/
+   * @see https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeLocalGateways.html
    */
   readonly filter: { [key: string]: string };
+}
+
+/**
+ * Query input for looking up an Outpost
+ */
+export interface OutpostContextQuery extends ContextLookupRoleOptions {
+  /**
+   * The ID or ARN of the Outpost
+   */
+  readonly outpostId: string;
 }
 
 /**
@@ -400,4 +415,5 @@ export type ContextQueryProperties =
   | SecurityGroupContextQuery
   | KeyContextQuery
   | LocalGatewayContextQuery
+  | OutpostContextQuery
   | PluginContextQuery;
