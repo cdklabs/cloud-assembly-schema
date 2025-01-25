@@ -55,6 +55,16 @@ export enum ContextProvider {
   KEY_PROVIDER = 'key-provider',
 
   /**
+   * Local Gateway Provider
+   */
+  LOCAL_GATEWAY_PROVIDER = 'local-gateway',
+
+  /**
+   * Outpost Provider
+   */
+  OUTPOST_PROVIDER = 'outpost',
+
+  /**
    * A plugin provider (the actual plugin name will be in the properties)
    */
   PLUGIN = 'plugin',
@@ -348,6 +358,30 @@ export interface KeyContextQuery extends ContextLookupRoleOptions {
 }
 
 /**
+ * Query input for looking up a Local Gateway
+ */
+export interface LocalGatewayContextQuery extends ContextLookupRoleOptions {
+  /**
+   * Filters to apply to the Local Gateway
+   *
+   * Filter parameters are the same as passed to DescribeLocalGateways.
+   *
+   * @see https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeLocalGateways.html
+   */
+  readonly filter: { [key: string]: string };
+}
+
+/**
+ * Query input for looking up an Outpost
+ */
+export interface OutpostContextQuery extends ContextLookupRoleOptions {
+  /**
+   * The ID or ARN of the Outpost
+   */
+  readonly outpostId: string;
+}
+
+/**
  * Query input for plugins
  *
  * This alternate branch is necessary because it needs to be able to escape all type checking
@@ -380,4 +414,6 @@ export type ContextQueryProperties =
   | LoadBalancerListenerContextQuery
   | SecurityGroupContextQuery
   | KeyContextQuery
+  | LocalGatewayContextQuery
+  | OutpostContextQuery
   | PluginContextQuery;
