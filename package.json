@@ -58,7 +58,7 @@
     "jsii-rosetta": "~5.7.4",
     "mock-fs": "^5.5.0",
     "prettier": "^3.5.0",
-    "projen": "^0.91.8",
+    "projen": "^0.91.9",
     "ts-jest": "29",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
