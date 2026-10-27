@@ -1,5 +1,9 @@
 # Cloud Assembly Schema
 
+> [!WARNING]
+> This repository contains historic versions of the Cloud Assembly Schema.
+> The current versions of the Cloud Assembly Schema can be found here: [aws/aws-cdk-cli](https://github.com/aws/aws-cdk-cli/tree/main/packages/%40aws-cdk/cloud-assembly-schema)
+
 This module is part of the [AWS Cloud Development Kit](https://github.com/aws/aws-cdk) project.
 
 ## Cloud Assembly
